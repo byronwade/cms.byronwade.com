@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, LayoutDashboard, FileText, Image as ImageIcon, Settings, Bot, BookOpen, Plus, ArrowLeft, Text, Heading, List, Table, FileImage, ArrowRight } from "lucide-react";
+import { ChevronRight, LayoutDashboard, FileText, Image as ImageIcon, Settings, Bot, BookOpen, Plus, ArrowLeft, Text, Heading, List, Table, FileImage, ArrowRight, House } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useEffect, useState, useCallback } from "react";
@@ -21,6 +21,12 @@ const contentBlocks = [
 ];
 
 const mainNavItems = [
+	{
+		title: "Home",
+		icon: House,
+		href: "/cms",
+		hasSubmenu: false,
+	},
 	{
 		title: "Dashboard",
 		icon: LayoutDashboard,
@@ -259,12 +265,10 @@ export function AppSidebar() {
 						<SidebarMenu>
 							{contentBlocks.map((block) => (
 								<SidebarMenuItem key={block.title}>
-									<button className="w-full" onClick={() => console.log(`Add ${block.type} block`)}>
-										<SidebarMenuButton tooltip={block.title}>
-											<block.icon className="h-4 w-4" />
-											<span className="group-has-[[data-collapsible=icon]]/sidebar-wrapper:hidden">{block.title}</span>
-										</SidebarMenuButton>
-									</button>
+									<SidebarMenuButton tooltip={block.title} onClick={() => console.log(`Add ${block.type} block`)}>
+										<block.icon className="h-4 w-4" />
+										<span className="group-has-[[data-collapsible=icon]]/sidebar-wrapper:hidden">{block.title}</span>
+									</SidebarMenuButton>
 								</SidebarMenuItem>
 							))}
 						</SidebarMenu>
