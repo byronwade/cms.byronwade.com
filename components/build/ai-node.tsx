@@ -1,7 +1,7 @@
 "use client";
 
 import { Bot, ArrowRightLeft, Sparkles, Workflow } from "lucide-react";
-import { Handle, NodeProps, Position, Connection } from "reactflow";
+import { Handle, NodeProps, Position } from "reactflow";
 import { motion } from "framer-motion";
 
 interface AINodeData {

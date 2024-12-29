@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useState, useEffect, useRef } from "react";
-import ReactFlow, { Node, Edge, Background, Controls, MiniMap, NodeTypes, EdgeTypes, Connection, useNodesState, useEdgesState, Panel, MarkerType, useReactFlow, ReactFlowProvider, Handle, Position, ConnectionMode, OnNodesChange, NodeChange, XYPosition, NodeDragHandler, applyNodeChanges, addEdge, ReactFlowInstance, OnConnectStart as ReactFlowOnConnectStart, OnConnectEnd as ReactFlowOnConnectEnd } from "reactflow";
+import ReactFlow, { Node, Edge, Background, NodeTypes, Connection, useEdgesState, MarkerType, useReactFlow, ReactFlowProvider, Handle, Position, ConnectionMode, NodeChange, applyNodeChanges, ReactFlowInstance } from "reactflow";
 import "reactflow/dist/style.css";
-import { Database, Key, Mail, Lock, Calendar, Tag, DollarSign, Hash, FileText, ShoppingCart, CreditCard, Plus, Minus, Maximize2, Save, Trash2, PlusCircle, Users, ToggleLeft, Braces, ListOrdered, CircleDot } from "lucide-react";
+import { Database, Key, Calendar, Tag, DollarSign, Hash, FileText, ShoppingCart, CreditCard, Plus, Minus, Maximize2, Trash2, PlusCircle, Users, ToggleLeft, Braces, ListOrdered, CircleDot } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,16 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useBuildStore } from "./store";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { BuildHeader } from "@/components/build/header";
-import { DragHandleDots2Icon } from "@radix-ui/react-icons";
-import { DragOverlay, useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { HoverTooltip } from "@/components/ui/hover-tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Toast } from "@/components/ui/toast";
-import { AISuggestions } from "@/components/build/ai-suggestions";
 import { AINode } from "@/components/build/ai-node";
+import { DragHandleDots2Icon } from "@radix-ui/react-icons";
+import { useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { closestCenter } from "@dnd-kit/core";
 
 // PostgreSQL data types
 const POSTGRES_TYPES = ["UUID", "VARCHAR", "TEXT", "INTEGER", "BIGINT", "DECIMAL", "BOOLEAN", "DATE", "TIMESTAMP", "JSON", "JSONB", "ARRAY"] as const;
@@ -42,36 +40,18 @@ const TYPE_FRIENDLY_NAMES: Record<string, string> = {
 	ARRAY: "List",
 };
 
-type PostgresType = (typeof POSTGRES_TYPES)[number];
-
 // Node Types
 interface TableNodeData {
 	name: string;
-	details: {
+	details: Array<{
 		id: string;
 		label: string;
 		type: string;
-	}[];
-}
-
-// Relationship types
-type RelationType = "one-to-one" | "one-to-many" | "many-to-many";
-
-interface RelationshipEdge extends Omit<Edge, "id"> {
-	id: string;
-	source: string;
-	target: string;
-	relationshipType: RelationType;
-	label?: string;
-	sourceHandle?: string | null;
-	targetHandle?: string | null;
+	}>;
+	icon?: JSX.Element;
 	type?: string;
-	markerEnd?: {
-		type: MarkerType;
-		color: string;
-	};
-	style?: React.CSSProperties;
-	animated?: boolean;
+	description?: string;
+	input?: string;
 }
 
 // Define icon type
@@ -1624,8 +1604,8 @@ function Flow() {
 	}, [addNewNode]);
 
 	// Add this new handler
-	const onConnectStart: ReactFlowOnConnectStart = useCallback(
-		(event, params) => {
+	const onConnectStart = useCallback(
+		(event: MouseEvent, params: { nodeId: string; handleId: string }) => {
 			if (params.nodeId && params.handleId) {
 				const sourceNode = nodes.find((n) => n.id === params.nodeId);
 				if (sourceNode) {
@@ -1638,9 +1618,9 @@ function Flow() {
 	);
 
 	// Add this new handler
-	const onConnectEnd: ReactFlowOnConnectEnd = useCallback(
-		(event) => {
-			const target = event?.target as Element | null;
+	const onConnectEnd = useCallback(
+		(event: ConnectEvent) => {
+			const target = event?.target;
 			if (!target) return;
 
 			const targetIsNode = target.closest(".react-flow__node");
