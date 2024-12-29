@@ -94,3 +94,7 @@ styles/:
 - This repository is designed as a server-first, frontend-only CMS to replicate backend-like behavior using simulated data.
 - All components, layouts, and features must align with the philosophy of frontend modularity and mimic Payload 3.0 and WordPress.
 
+
+- everything needs to be in dark mode
+- everything needs to be in tailwind
+- we need to make sure were adding in light mod

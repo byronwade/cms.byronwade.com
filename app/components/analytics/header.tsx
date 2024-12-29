@@ -1,0 +1,28 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { PanelLeft, PanelRight } from "lucide-react";
+
+interface AnalyticsHeaderProps {
+	leftSidebarOpen: boolean;
+	rightSidebarOpen: boolean;
+	onToggleLeftSidebar: () => void;
+	onToggleRightSidebar: () => void;
+}
+
+export function AnalyticsHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSidebar, onToggleRightSidebar }: AnalyticsHeaderProps) {
+	return (
+		<header className="h-[var(--header-height)] border-b border-[#1f1f1f] bg-[#0a0a0a] flex items-center justify-between px-4">
+			<div className="flex items-center gap-2">
+				<Button variant="ghost" size="icon" onClick={onToggleLeftSidebar}>
+					<PanelLeft className={`h-5 w-5 transition-transform ${!leftSidebarOpen ? "rotate-180" : ""}`} />
+				</Button>
+				<h1 className="text-lg font-semibold">Analytics</h1>
+			</div>
+
+			<Button variant="ghost" size="icon" onClick={onToggleRightSidebar}>
+				<PanelRight className={`h-5 w-5 transition-transform ${!rightSidebarOpen ? "-rotate-180" : ""}`} />
+			</Button>
+		</header>
+	);
+}

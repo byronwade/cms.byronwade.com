@@ -1,0 +1,99 @@
+/* Override BlockNote default styles */
+.bn-container {
+	background-color: #191919 !important;
+	border-radius: 0 !important;
+	min-height: 100vh !important;
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+.bn-editor {
+	max-width: 100% !important;
+	padding: 2rem !important;
+	background-color: #191919 !important;
+	border-radius: 0 !important;
+}
+
+/* Remove default background from toolbar */
+.bn-toolbar {
+	background: transparent !important;
+	border: none !important;
+	margin: 0 !important;
+	border-radius: 0 !important;
+}
+
+/* Style the editor content */
+.bn-content {
+	padding: 0 !important;
+	background-color: #191919 !important;
+}
+
+/* Remove default block hover backgrounds */
+.bn-block:hover {
+	background: transparent !important;
+}
+
+/* Style the block selection */
+.bn-block.bn-selected {
+	background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Style the slash menu */
+.bn-slash-menu {
+	background: #2a2a2a !important;
+	border: 1px solid #3a3a3a !important;
+	border-radius: 0.5rem !important;
+}
+
+.bn-slash-menu-item {
+	color: #fff !important;
+}
+
+.bn-slash-menu-item:hover,
+.bn-slash-menu-item.bn-active {
+	background: #3a3a3a !important;
+}
+
+/* Style the formatting menu */
+.bn-formatting-menu {
+	background: #2a2a2a !important;
+	border: 1px solid #3a3a3a !important;
+	border-radius: 0.5rem !important;
+}
+
+.bn-formatting-menu-button {
+	color: #fff !important;
+}
+
+.bn-formatting-menu-button:hover {
+	background: #3a3a3a !important;
+}
+
+/* Additional fixes for rounded corners and backgrounds */
+[data-node-type="blockContainer"] {
+	background-color: #191919 !important;
+	border-radius: 0 !important;
+}
+
+[data-node-type="blockGroup"] {
+	background-color: #191919 !important;
+	border-radius: 0 !important;
+}
+
+.mantine-RichTextEditor-root {
+	background-color: #191919 !important;
+	border-radius: 0 !important;
+	border: none !important;
+}
+
+.mantine-RichTextEditor-content {
+	background-color: #191919 !important;
+	border-radius: 0 !important;
+}
+
+/* Fix for the toolbar */
+.mantine-RichTextEditor-toolbar {
+	background-color: #191919 !important;
+	border-radius: 0 !important;
+	border-bottom: 1px solid #2a2a2a !important;
+} 

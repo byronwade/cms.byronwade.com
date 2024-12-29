@@ -2,43 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --foreground: 222.2 47.4% 11.2%;
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 215.4 16.3% 46.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+      --border: 214.3 31.8% 91.4%;
+      --input: 214.3 31.8% 91.4%;
+      --card: 0 0% 100%;
+      --card-foreground: 222.2 47.4% 11.2%;
+      --primary: 222.2 47.4% 11.2%;
+      --primary-foreground: 210 40% 98%;
+      --secondary: 210 40% 96.1%;
+      --secondary-foreground: 222.2 47.4% 11.2%;
+      --accent: 210 40% 96.1%;
+      --accent-foreground: 222.2 47.4% 11.2%;
+      --destructive: 0 100% 50%;
+      --destructive-foreground: 210 40% 98%;
+      --ring: 215 20.2% 65.1%;
     --radius: 0.5rem;
+    --sidebar-width: 300px;
+      --header-height: 40px;
+      --footer-height: 32px;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -47,40 +35,18 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+/* Z-index hierarchy */
+  --z-content: 1;
+  --z-base: 10;
+  --z-header: 100;
+  --z-sidebar: 200;
+  --z-sticky: 300;
+  --z-popover: 70000;
+  --z-dropdown: 50000;
+  --z-tooltip: 60000;
+  --z-overlay: 80000;
+  --z-modal: 90000;
+  --z-toast: 100000;
   }
 }
 
@@ -91,4 +57,263 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@layer components {
+  .DialogOverlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    inset: 0;
+    animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: var(--z-overlay) !important;
+  }
+
+  .DialogContent {
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 450px;
+    max-height: 85vh;
+    padding: 25px;
+    animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: var(--z-modal) !important;
+  }
+
+  @keyframes overlayShow {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes contentShow {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -48%) scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+}
+
+/* Ensure the Sheet overlay covers the entire screen */
+.fixed.inset-0 {
+  z-index: var(--z-overlay) !important;
+}
+
+/* React Flow Dark Theme */
+.react-flow-dark {
+  background-color: #0a0a0a;
+}
+
+.react-flow-dark .react-flow__node {
+  background: transparent;
+  border: none;
+}
+
+.react-flow-dark .react-flow__handle {
+  width: 8px;
+  height: 8px;
+  background-color: #3b82f6;
+  border: 2px solid #1e293b;
+}
+
+.react-flow-dark .react-flow__handle:hover {
+  background-color: #60a5fa;
+}
+
+.react-flow-dark .react-flow__edge path {
+  stroke: #3b82f6;
+  stroke-width: 2;
+}
+
+.react-flow-dark .react-flow__edge.animated path {
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+}
+
+.react-flow-dark .react-flow__edge-path {
+  stroke: #3b82f6;
+  stroke-width: 2;
+}
+
+.react-flow-dark .react-flow__edge-text {
+  fill: #3b82f6;
+  font-weight: bold;
+}
+
+.react-flow-dark .react-flow__edge-textbg {
+  fill: #1b1b1b;
+}
+
+.react-flow-dark .react-flow__connection-path {
+  stroke: #3b82f6;
+  stroke-width: 2;
+}
+
+.react-flow-dark .react-flow__edge-interaction {
+  stroke: #3b82f6;
+  stroke-width: 2;
+}
+
+@keyframes dashdraw {
+  from {
+    stroke-dashoffset: 10;
+  }
+}
+
+.react-flow-dark .react-flow__controls {
+  box-shadow: none;
+}
+
+.react-flow-dark .react-flow__controls button {
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #2a2a2a;
+  color: #ffffff;
+}
+
+.react-flow-dark .react-flow__controls button:hover {
+  background-color: #2a2a2a;
+}
+
+.react-flow-dark .react-flow__minimap {
+  background-color: #1a1a1a;
+}
+
+.react-flow-dark .react-flow__attribution {
+  display: none;
+}
+
+/* Add smooth transitions */
+.react-flow__node-tableNode {
+  transition: transform 0.2s ease;
+}
+
+.react-flow__handle {
+  transition: all 0.2s ease;
+}
+
+.react-flow__edge {
+  transition: stroke 0.2s ease;
+}
+
+/* Connection line style */
+.react-flow__connection-path {
+  stroke: #60a5fa;
+  stroke-width: 2;
+}
+
+/* Selected node style */
+.react-flow__node.selected {
+  outline: 2px solid #3b82f6;
+}
+
+/* Ensure dropdowns and tooltips appear above content */
+.radix-popover-content,
+.radix-dropdown-menu-content,
+.radix-select-content,
+.radix-tooltip-content {
+  z-index: var(--z-popover) !important;
+}
+
+/* Ensure modals appear above everything */
+.radix-dialog-content,
+.radix-sheet-content {
+  z-index: var(--z-modal) !important;
+}
+
+/* Ensure overlays appear at the correct level */
+.radix-dialog-overlay,
+.radix-sheet-overlay {
+  z-index: var(--z-overlay) !important;
+}
+
+/* Ensure popper content appears above other elements */
+[data-radix-popper-content-wrapper] {
+  z-index: var(--z-popover) !important;
+}
+
+/* Ensure content area appears at the correct level */
+.content-area {
+  z-index: var(--z-content) !important;
+}
+
+/* Ensure sidebars appear at the correct level */
+.sidebar {
+  z-index: var(--z-sidebar) !important;
+}
+
+/* Ensure header appears at the correct level */
+.header {
+  z-index: var(--z-header) !important;
+}
+
+/* Ensure overlays appear at the correct level */
+.overlay {
+  z-index: var(--z-overlay) !important;
+}
+
+/* Base layer components */
+.content-area {
+  z-index: var(--z-content);
+}
+
+.header {
+  z-index: var(--z-header);
+}
+
+.sidebar {
+  z-index: var(--z-sidebar);
+}
+
+/* Dropdown menus */
+.z-dropdown,
+[data-radix-popper-content-wrapper],
+[data-state="open"] {
+  z-index: var(--z-dropdown) !important;
+}
+
+/* Tooltips */
+[role="tooltip"],
+.tooltip {
+  z-index: var(--z-tooltip) !important;
+}
+
+/* Dialog/Modal components */
+.DialogOverlay,
+.dialog-overlay,
+[data-overlay] {
+  z-index: var(--z-overlay) !important;
+}
+
+.DialogContent,
+.dialog-content,
+[data-content] {
+  z-index: var(--z-modal) !important;
+}
+
+/* Toast notifications */
+.toast {
+  z-index: var(--z-toast) !important;
+}
+
+/* Ensure popper content appears above other elements */
+[data-radix-popper-content-wrapper] {
+  z-index: var(--z-dropdown) !important;
+}
+
+/* Ensure overlays appear at the correct level */
+.fixed.inset-0 {
+  z-index: var(--z-overlay) !important;
 }

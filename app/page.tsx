@@ -36,7 +36,7 @@ export default function Home() {
 			<div className="flex min-h-screen flex-col items-center bg-background">
 				<div className="container flex max-w-[64rem] flex-col items-center gap-8 text-center py-12">
 					<div className="space-y-4">
-						<h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400">MyCMS</h1>
+						<h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-neutral-100 dark:to-neutral-400">MyCMS</h1>
 						<p className="text-xl text-muted-foreground max-w-[42rem] mx-auto">The modern alternative to WordPress. Build faster, scale better, and maintain easier with our next-generation CMS</p>
 					</div>
 
@@ -48,7 +48,7 @@ export default function Home() {
 							</Button>
 						</a>
 						<a href="/cms">
-							<Button size="lg" className="bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-400 text-white dark:text-gray-900">
+							<Button size="lg" className="bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-neutral-100 dark:to-neutral-400 dark:text-neutral-900">
 								<Layout className="mr-2 h-4 w-4" />
 								Open Admin Panel
 							</Button>
