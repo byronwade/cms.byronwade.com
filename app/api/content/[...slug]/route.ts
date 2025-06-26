@@ -18,9 +18,10 @@ async function ensureDirectoryExists(filePath: string) {
 }
 
 // GET handler
-export async function GET(request: Request, { params }: { params: { slug: string[] } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ slug: string[] }> }) {
 	try {
-		const filePath = getContentPath(params.slug);
+		const { slug } = await params;
+		const filePath = getContentPath(slug);
 		const content = await fs.readFile(filePath, "utf-8");
 		return NextResponse.json(JSON.parse(content));
 	} catch (error) {
@@ -44,10 +45,11 @@ export async function GET(request: Request, { params }: { params: { slug: string
 }
 
 // POST handler
-export async function POST(request: Request, { params }: { params: { slug: string[] } }) {
+export async function POST(request: Request, { params }: { params: Promise<{ slug: string[] }> }) {
 	try {
+		const { slug } = await params;
 		const body = await request.json();
-		const filePath = getContentPath(params.slug);
+		const filePath = getContentPath(slug);
 		await ensureDirectoryExists(filePath);
 		await fs.writeFile(filePath, JSON.stringify(body, null, 2));
 		return NextResponse.json({ success: true });

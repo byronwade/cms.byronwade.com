@@ -48,7 +48,7 @@ interface TableNodeData {
 		label: string;
 		type: string;
 	}>;
-	icon?: JSX.Element;
+	icon?: JSX.Element | string;
 	type?: string;
 	description?: string;
 	input?: string;

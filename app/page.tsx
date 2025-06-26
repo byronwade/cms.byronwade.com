@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Github, Layout, Code2, Server, Shield, Globe, Boxes, Workflow, Languages, Laptop, Cloud, Blocks, Users, Brush, Bot, FileJson, Zap, Rocket, Gauge, Lock, Search, Database, Settings, Cpu, BanknoteIcon, Clock, ImageIcon, Puzzle, Wifi, Download, BarChart, Layers, Heart, Keyboard } from "lucide-react";
 
 export default function Home() {
-	return (
+  return (
 		<>
 			<div className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
 				<div className="container flex h-14 items-center">
@@ -306,5 +306,5 @@ export default function Home() {
 				</div>
 			</div>
 		</>
-	);
+  );
 }

@@ -7,7 +7,8 @@
         "textColor": "default",
         "backgroundColor": "default",
         "textAlignment": "left",
-        "level": 1
+        "level": 1,
+        "isToggleable": false
       },
       "content": [
         {
@@ -70,7 +71,8 @@
         "textColor": "default",
         "backgroundColor": "default",
         "textAlignment": "left",
-        "level": 1
+        "level": 1,
+        "isToggleable": false
       },
       "content": [
         {

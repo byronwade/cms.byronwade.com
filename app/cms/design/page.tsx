@@ -3,11 +3,7 @@
 import { ContentArea } from "@/components/design/content-area";
 import { useState, useEffect } from "react";
 
-interface PageProps {
-	reactScanEnabled?: boolean;
-}
-
-export default function Page({ reactScanEnabled = false }: PageProps) {
+export default function Page() {
 	const [contentWidth, setContentWidth] = useState(1440);
 
 	useEffect(() => {
@@ -23,7 +19,7 @@ export default function Page({ reactScanEnabled = false }: PageProps) {
 
 	return (
 		<div className="h-full">
-			<ContentArea initialWidth={contentWidth} onWidthChange={setContentWidth} reactScanEnabled={reactScanEnabled} />
+			<ContentArea initialWidth={contentWidth} onWidthChange={setContentWidth} />
 		</div>
 	);
 }
