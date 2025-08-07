@@ -117,7 +117,7 @@ export function PublishRightSidebar({ isOpen }: PublishRightSidebarProps) {
 					<div className="space-y-3">
 						<h3 className="text-sm font-medium text-white">Comments</h3>
 						<div className="space-y-3">
-							{selectedItem.comments.map((comment) => (
+                                                        {selectedItem.comments.map((comment: any) => (
 								<div key={comment.id} className="p-3 space-y-2 rounded-lg bg-[#2a2a2a]">
 									<div className="flex items-center justify-between">
 										<div className="flex items-center gap-2">

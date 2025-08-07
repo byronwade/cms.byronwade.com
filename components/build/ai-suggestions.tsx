@@ -9,7 +9,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export function AISuggestions() {
-	const { aiSuggestedNodes, generateNodeSuggestions, convertSuggestionToNode } = useBuildStore();
+        // Cast store to any to access AI suggestion helpers that may not be typed yet
+        const {
+                aiSuggestedNodes = [],
+                generateNodeSuggestions = () => {},
+                convertSuggestionToNode = () => {}
+        } = useBuildStore() as any;
 
 	useEffect(() => {
 		generateNodeSuggestions();
@@ -32,7 +37,7 @@ export function AISuggestions() {
 
 				<ScrollArea className="h-[calc(100vh-280px)]">
 					<div className="space-y-3">
-						{aiSuggestedNodes.map((suggestion) => (
+                                                {aiSuggestedNodes.map((suggestion: any) => (
 							<motion.div key={suggestion.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="group">
 								<div className="p-3 rounded-lg border border-[#2a2a2a] hover:border-blue-500/50 transition-all duration-200 bg-[#1f1f1f] hover:bg-[#1f1f1f]/80 space-y-2">
 									<div className="flex items-start justify-between gap-2">
@@ -60,7 +65,7 @@ export function AISuggestions() {
 												<div className="mt-2 pt-2 border-t border-[#2a2a2a]">
 													<p className="text-xs font-medium text-gray-400 mb-1">Suggested Fields:</p>
 													<ul className="text-xs text-gray-300 space-y-1">
-														{suggestion.details.slice(0, 5).map((field) => (
+                                                                                                        {suggestion.details.slice(0, 5).map((field: any) => (
 															<li key={field.id} className="flex items-center gap-2">
 																<span className="text-blue-400">{field.label}</span>
 																<span className="text-gray-500">({field.type})</span>
@@ -76,7 +81,7 @@ export function AISuggestions() {
 									{suggestion.suggestedConnections && suggestion.suggestedConnections.length > 0 && (
 										<div className="text-[10px] text-gray-500">
 											<span className="text-gray-400">Connects with: </span>
-											{suggestion.suggestedConnections.map((conn, i) => (
+                                                                                        {suggestion.suggestedConnections.map((conn: any, i: number) => (
 												<span key={i}>
 													<span className="text-blue-400">{conn.targetNodeId}</span>
 													{i < suggestion.suggestedConnections!.length - 1 ? ", " : ""}

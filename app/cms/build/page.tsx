@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState, useEffect, useRef } from "react";
-import ReactFlow, { Node, Edge, Background, NodeTypes, Connection, useEdgesState, MarkerType, useReactFlow, ReactFlowProvider, Handle, Position, ConnectionMode, NodeChange, applyNodeChanges, ReactFlowInstance } from "reactflow";
+import ReactFlow, { Node, Edge, Background, NodeTypes, Connection, useEdgesState, MarkerType, useReactFlow, ReactFlowProvider, Handle, Position, ConnectionMode, NodeChange, applyNodeChanges, ReactFlowInstance, OnConnectStartParams } from "reactflow";
 import "reactflow/dist/style.css";
 import { Database, Key, Calendar, Tag, DollarSign, Hash, FileText, ShoppingCart, CreditCard, Plus, Minus, Maximize2, Trash2, PlusCircle, Users, ToggleLeft, Braces, ListOrdered, CircleDot } from "lucide-react";
 import { motion } from "framer-motion";
@@ -1418,7 +1418,7 @@ function Flow() {
 				},
 			};
 
-			setNodes((nds: Node<TableNodeData>[]) => [...nds, newNode]);
+               setNodes((nds: Node[]) => [...nds, newNode]);
 			updateNodePosition(newNodeId, position);
 
 			// Use RAF to ensure DOM is updated before animation
@@ -1604,27 +1604,27 @@ function Flow() {
 	}, [addNewNode]);
 
 	// Add this new handler
-	const onConnectStart = useCallback(
-		(event: MouseEvent, params: { nodeId: string; handleId: string }) => {
-			if (params.nodeId && params.handleId) {
-				const sourceNode = nodes.find((n) => n.id === params.nodeId);
-				if (sourceNode) {
-					setSourceNodeName(sourceNode.data.name.toLowerCase());
-					setSourceNodeId(params.nodeId);
-				}
-			}
-		},
-		[nodes]
-	);
+       const onConnectStart = useCallback(
+               (event: React.MouseEvent | React.TouchEvent, params: OnConnectStartParams) => {
+                       if (params.nodeId && params.handleId) {
+                               const sourceNode = nodes.find((n) => n.id === params.nodeId);
+                               if (sourceNode) {
+                                       setSourceNodeName(sourceNode.data.name.toLowerCase());
+                                       setSourceNodeId(params.nodeId);
+                               }
+                       }
+               },
+               [nodes]
+       );
 
 	// Add this new handler
-	const onConnectEnd = useCallback(
-		(event: ConnectEvent) => {
-			const target = event?.target;
-			if (!target) return;
+       const onConnectEnd = useCallback(
+               (event: MouseEvent | TouchEvent) => {
+                       const target = event?.target as Element | null;
+                       if (!target) return;
 
-			const targetIsNode = target.closest(".react-flow__node");
-			const targetIsPane = target.classList.contains("react-flow__pane");
+                       const targetIsNode = target.closest(".react-flow__node");
+                       const targetIsPane = target.classList.contains("react-flow__pane");
 
 			if (!targetIsNode && targetIsPane && sourceNodeId) {
 				// Only show selector if we have a source node
