@@ -46,8 +46,8 @@ export const AnalyticsSummarySchema = schema(
 		totalUsers: z.number(),
 		totalRevenue: z.number(),
 		conversionRate: z.number(),
-		timeSeriesData: TimeSeriesDataSchema,
-		topPages: z.array(PageViewSchema),
-		recentActivity: z.array(ActivitySchema),
-	})
+                timeSeriesData: TimeSeriesDataSchema as any,
+                topPages: z.array(PageViewSchema as any),
+                recentActivity: z.array(ActivitySchema as any),
+        })
 );

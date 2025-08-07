@@ -1,4 +1,4 @@
-import { PageHeader } from './page-header'
+import { AnalyticsHeader } from './header'
 
 interface AnalyticsContentProps {
   sidebarOpen: boolean
@@ -8,13 +8,11 @@ interface AnalyticsContentProps {
 export function AnalyticsContent({ sidebarOpen, onToggleSidebar }: AnalyticsContentProps) {
   return (
     <>
-      <PageHeader
+      <AnalyticsHeader
         leftSidebarOpen={sidebarOpen}
         rightSidebarOpen={false}
         onToggleLeftSidebar={onToggleSidebar}
         onToggleRightSidebar={() => {}}
-        contentWidth={0}
-        onContentWidthChange={() => {}}
       />
       <div 
         className="fixed top-20 bottom-0 left-0 right-0 bg-[#2a2a2a] transition-all duration-300 ease-in-out overflow-hidden"
