@@ -3,33 +3,33 @@ import { Node, XYPosition, Edge } from "reactflow";
 import { TableNodeData } from "./types";
 
 interface BuildStore {
-	nodes: Node<TableNodeData>[];
-	edges: Edge[];
-	selectedNode: Node | null;
-	rightSidebarContent: React.ReactNode | null;
-	isRightSidebarOpen: boolean;
-	setNodes: (nodes: Node<TableNodeData>[] | ((prev: Node<TableNodeData>[]) => Node<TableNodeData>[])) => void;
-	setSelectedNode: (node: Node | null) => void;
-	setRightSidebarContent: (content: React.ReactNode | null) => void;
-	openRightSidebar: () => void;
-	closeRightSidebar: () => void;
-	updateNodeData: (nodeId: string, data: Partial<TableNodeData>) => void;
-	updateNodePosition: (nodeId: string, position: XYPosition) => void;
-	addField: (nodeId: string, field: { id: string; label: string; type: string }) => void;
-	updateField: (nodeId: string, fieldId: string, updates: Partial<{ label: string; type: string }>) => void;
-	deleteField: (nodeId: string, fieldId: string) => void;
-	loadNodePositions: () => Record<string, XYPosition>;
-	findAvailablePosition: (nodes: Node[]) => XYPosition;
-	initializePositions: (positions: Record<string, XYPosition>) => void;
-	setEdges: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
+        nodes: Node[];
+        edges: Edge[];
+        selectedNode: Node | null;
+        rightSidebarContent: React.ReactNode | null;
+        isRightSidebarOpen: boolean;
+        setNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
+        setSelectedNode: (node: Node | null) => void;
+        setRightSidebarContent: (content: React.ReactNode | null) => void;
+        openRightSidebar: () => void;
+        closeRightSidebar: () => void;
+        updateNodeData: (nodeId: string, data: Partial<TableNodeData>) => void;
+        updateNodePosition: (nodeId: string, position: XYPosition) => void;
+        addField: (nodeId: string, field: { id: string; label: string; type: string }) => void;
+        updateField: (nodeId: string, fieldId: string, updates: Partial<{ label: string; type: string }>) => void;
+        deleteField: (nodeId: string, fieldId: string) => void;
+        loadNodePositions: () => Record<string, XYPosition>;
+        findAvailablePosition: (nodes: Node[]) => XYPosition;
+        initializePositions: (positions: Record<string, XYPosition>) => void;
+        setEdges: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
 }
 
 export const useBuildStore = create<BuildStore>((set) => ({
-	nodes: [] as Node<TableNodeData>[],
-	edges: [],
-	selectedNode: null,
-	rightSidebarContent: null,
-	isRightSidebarOpen: false,
+        nodes: [] as Node[],
+        edges: [],
+        selectedNode: null,
+        rightSidebarContent: null,
+        isRightSidebarOpen: false,
 
 	setNodes: (nodes) => {
 		if (typeof nodes === "function") {
