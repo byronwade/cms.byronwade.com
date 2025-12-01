@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import {
+	Copy,
+	ExternalLink,
+	Globe,
+	Plus,
+	RefreshCw,
+	Trash2,
+} from "lucide-react";
+import { useCallback, useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Globe, Plus, Trash2, ExternalLink, RefreshCw, Copy } from "lucide-react";
-import { toast } from "sonner";
 
 export default function DomainsSettingsPage() {
 	const [newDomain, setNewDomain] = useState("");
@@ -30,7 +37,7 @@ export default function DomainsSettingsPage() {
 		},
 	]);
 
-	const handleAddDomain = () => {
+	const handleAddDomain = useCallback(async () => {
 		if (!newDomain) {
 			toast.error("Please enter a domain name");
 			return;
@@ -42,73 +49,125 @@ export default function DomainsSettingsPage() {
 			return;
 		}
 
+		// Optimistic update - add domain immediately
 		const newDomainObj = {
 			id: domains.length + 1,
 			domain: newDomain,
-			status: "pending",
+			status: "pending" as const,
 			ssl: false,
 			primary: domains.length === 0,
 			addedOn: new Date().toISOString().split("T")[0],
 		};
 
+		// Optimistically add to UI
 		setDomains([...domains, newDomainObj]);
+		const domainToAdd = newDomain;
 		setNewDomain("");
-		toast.success("Domain added successfully");
-	};
 
-	const handleRemoveDomain = (id: number) => {
-		const domain = domains.find((d) => d.id === id);
-		if (domain?.primary) {
-			toast.error("Cannot remove primary domain");
-			return;
+		try {
+			// Simulate API call
+			await new Promise((resolve) => setTimeout(resolve, 500));
+			toast.success("Domain added successfully");
+		} catch (_error) {
+			// Revert on error
+			setDomains(domains);
+			setNewDomain(domainToAdd);
+			toast.error("Failed to add domain");
 		}
+	}, [newDomain, domains]);
 
-		setDomains(domains.filter((d) => d.id !== id));
-		toast.success("Domain removed successfully");
-	};
+	const handleRemoveDomain = useCallback(
+		async (id: number) => {
+			const domain = domains.find((d) => d.id === id);
+			if (domain?.primary) {
+				toast.error("Cannot remove primary domain");
+				return;
+			}
 
-	const handleMakePrimary = (id: number) => {
-		setDomains(
-			domains.map((d) => ({
-				...d,
-				primary: d.id === id,
-			}))
-		);
-		toast.success("Primary domain updated");
-	};
+			// Optimistic update - remove immediately
+			const domainToRemove = domain;
+			setDomains(domains.filter((d) => d.id !== id));
+			toast.success("Domain removed successfully");
 
-	const handleRefreshStatus = (id: number) => {
-		setDomains(
-			domains.map((d) =>
-				d.id === id
-					? {
-							...d,
-							status: d.status === "pending" ? "active" : "pending",
-							ssl: d.status === "pending" ? true : d.ssl,
-					  }
-					: d
-			)
-		);
-		toast.success("Domain status refreshed");
-	};
+			try {
+				// Simulate API call
+				await new Promise((resolve) => setTimeout(resolve, 500));
+			} catch (_error) {
+				// Revert on error
+				if (domainToRemove) {
+					setDomains([...domains]);
+				}
+				toast.error("Failed to remove domain");
+			}
+		},
+		[domains],
+	);
 
-	const handleCopyText = (text: string) => {
+	const handleMakePrimary = useCallback(
+		async (id: number) => {
+			// Optimistic update - update immediately
+			const previousDomains = domains;
+			setDomains(
+				domains.map((d) => ({
+					...d,
+					primary: d.id === id,
+				})),
+			);
+			toast.success("Primary domain updated");
+
+			try {
+				// Simulate API call
+				await new Promise((resolve) => setTimeout(resolve, 500));
+			} catch (_error) {
+				// Revert on error
+				setDomains(previousDomains);
+				toast.error("Failed to update primary domain");
+			}
+		},
+		[domains],
+	);
+
+	const handleRefreshStatus = useCallback(
+		(id: number) => {
+			setDomains(
+				domains.map((d) =>
+					d.id === id
+						? {
+								...d,
+								status: d.status === "pending" ? "active" : "pending",
+								ssl: d.status === "pending" ? true : d.ssl,
+							}
+						: d,
+				),
+			);
+			toast.success("Domain status refreshed");
+		},
+		[domains],
+	);
+
+	const handleCopyText = useCallback((text: string) => {
 		navigator.clipboard.writeText(text);
 		toast.success("Copied to clipboard");
-	};
+	}, []);
 
 	return (
 		<div className="p-6 space-y-6">
 			{/* Add Domain */}
 			<div>
 				<h2 className="text-sm font-medium mb-2">Add Domain</h2>
-				<Card className="p-4 bg-[#1a1a1a] border-[#2a2a2a]">
+				<Card className="p-4 bg-card border-border">
 					<div className="space-y-4">
 						<div>
 							<Label htmlFor="new-domain">Domain Name</Label>
 							<div className="flex items-center gap-4 mt-2">
-								<Input id="new-domain" value={newDomain} onChange={(e) => setNewDomain(e.target.value)} placeholder="Enter domain name" className="max-w-[300px] bg-[#2a2a2a] border-[#3a3a3a] text-white" />
-								<Button variant="outline" size="sm" onClick={handleAddDomain} className="bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white border-[#3a3a3a]">
+								<Input
+									id="new-domain"
+									value={newDomain}
+									onChange={(e) => setNewDomain(e.target.value)}
+									placeholder="Enter domain name"
+									className="max-w-[300px] bg-muted border-border"
+								/>
+								<Button variant="outline" size="sm" onClick={handleAddDomain}>
 									<Plus className="w-4 h-4 mr-2" />
 									Add Domain
 								</Button>
@@ -121,45 +180,88 @@ export default function DomainsSettingsPage() {
 			{/* Domain List */}
 			<div>
 				<h2 className="text-sm font-medium mb-2">Domains</h2>
-				<Card className="p-4 bg-[#1a1a1a] border-[#2a2a2a]">
+				<Card className="p-4 bg-card border-border">
 					<div className="space-y-4">
 						{domains.map((domain) => (
-							<div key={domain.id} className="flex items-center justify-between p-3 rounded-md bg-[#2a2a2a] border border-[#3a3a3a]">
+							<div
+								key={domain.id}
+								className="flex items-center justify-between p-3 rounded-md bg-muted border border-border"
+							>
 								<div className="flex items-center gap-3">
-									<Globe className="w-4 h-4 text-gray-400" />
+									<Globe className="w-4 h-4 text-muted-foreground" />
 									<div>
 										<div className="flex items-center gap-2">
-											<span className="text-sm font-medium">{domain.domain}</span>
+											<span className="text-sm font-medium text-card-foreground">
+												{domain.domain}
+											</span>
 											{domain.primary ? (
-												<Badge variant="secondary" className="bg-blue-500/10 text-blue-400 hover:bg-blue-500/20">
+												<Badge
+													variant="secondary"
+													className="bg-primary/10 text-primary hover:bg-primary/20"
+												>
 													Primary
 												</Badge>
 											) : (
-												<Button variant="ghost" size="sm" onClick={() => handleMakePrimary(domain.id)} className="px-2 py-0 h-5 text-xs text-gray-400 hover:text-white hover:bg-[#3a3a3a]">
+												<Button
+													variant="ghost"
+													size="sm"
+													onClick={() => handleMakePrimary(domain.id)}
+													className="px-2 py-0 h-5 text-xs text-muted-foreground hover:text-foreground hover:bg-accent"
+												>
 													Make Primary
 												</Button>
 											)}
-											<Badge variant="secondary" className={domain.status === "active" ? "bg-green-500/10 text-green-400 hover:bg-green-500/20" : "bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20"}>
+											<Badge
+												variant="secondary"
+												className={
+													domain.status === "active"
+														? "bg-green-500/10 text-green-500 hover:bg-green-500/20"
+														: "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20"
+												}
+											>
 												{domain.status === "active" ? "Active" : "Pending"}
 											</Badge>
 											{domain.ssl && (
-												<Badge variant="secondary" className="bg-purple-500/10 text-purple-400 hover:bg-purple-500/20">
+												<Badge
+													variant="secondary"
+													className="bg-accent/10 text-accent hover:bg-accent/20"
+												>
 													SSL
 												</Badge>
 											)}
 										</div>
-										<p className="text-xs text-gray-400 mt-1">Added on {new Date(domain.addedOn).toLocaleDateString()}</p>
+										<p className="text-xs text-muted-foreground mt-1">
+											Added on {new Date(domain.addedOn).toLocaleDateString()}
+										</p>
 									</div>
 								</div>
 
 								<div className="flex items-center gap-2">
-									<Button variant="ghost" size="sm" onClick={() => window.open(`https://${domain.domain}`, "_blank")} className="text-gray-400 hover:text-white hover:bg-[#3a3a3a]">
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={() =>
+											window.open(`https://${domain.domain}`, "_blank")
+										}
+										className="text-muted-foreground hover:text-foreground hover:bg-accent"
+									>
 										<ExternalLink className="w-4 h-4" />
 									</Button>
-									<Button variant="ghost" size="sm" onClick={() => handleRefreshStatus(domain.id)} className="text-gray-400 hover:text-white hover:bg-[#3a3a3a]">
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={() => handleRefreshStatus(domain.id)}
+										className="text-muted-foreground hover:text-foreground hover:bg-accent"
+									>
 										<RefreshCw className="w-4 h-4" />
 									</Button>
-									<Button variant="ghost" size="sm" onClick={() => handleRemoveDomain(domain.id)} className="text-red-400 hover:text-red-300 hover:bg-red-500/10" disabled={domain.primary}>
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={() => handleRemoveDomain(domain.id)}
+										className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+										disabled={domain.primary}
+									>
 										<Trash2 className="w-4 h-4" />
 									</Button>
 								</div>
@@ -172,14 +274,21 @@ export default function DomainsSettingsPage() {
 			{/* DNS Configuration */}
 			<div>
 				<h2 className="text-sm font-medium mb-2">DNS Configuration</h2>
-				<Card className="p-4 bg-[#1a1a1a] border-[#2a2a2a]">
+				<Card className="p-4 bg-card border-border">
 					<div className="space-y-4">
 						<div>
 							<Label>A Record</Label>
-							<div className="mt-2 p-3 rounded-md bg-[#2a2a2a] border border-[#3a3a3a]">
+							<div className="mt-2 p-3 rounded-md bg-muted border border-border">
 								<div className="flex items-center justify-between">
-									<code className="text-sm text-gray-400">@ IN A 123.456.789.0</code>
-									<Button variant="ghost" size="sm" onClick={() => handleCopyText("@ IN A 123.456.789.0")} className="text-gray-400 hover:text-white hover:bg-[#3a3a3a]">
+									<code className="text-sm text-muted-foreground">
+										@ IN A 123.456.789.0
+									</code>
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={() => handleCopyText("@ IN A 123.456.789.0")}
+										className="text-muted-foreground hover:text-foreground hover:bg-accent"
+									>
 										<Copy className="w-4 h-4" />
 									</Button>
 								</div>
@@ -188,10 +297,17 @@ export default function DomainsSettingsPage() {
 
 						<div>
 							<Label>CNAME Record</Label>
-							<div className="mt-2 p-3 rounded-md bg-[#2a2a2a] border border-[#3a3a3a]">
+							<div className="mt-2 p-3 rounded-md bg-muted border border-border">
 								<div className="flex items-center justify-between">
-									<code className="text-sm text-gray-400">www IN CNAME example.com.</code>
-									<Button variant="ghost" size="sm" onClick={() => handleCopyText("www IN CNAME example.com.")} className="text-gray-400 hover:text-white hover:bg-[#3a3a3a]">
+									<code className="text-sm text-muted-foreground">
+										www IN CNAME example.com.
+									</code>
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={() => handleCopyText("www IN CNAME example.com.")}
+										className="text-muted-foreground hover:text-foreground hover:bg-accent"
+									>
 										<Copy className="w-4 h-4" />
 									</Button>
 								</div>

@@ -1,7 +1,16 @@
-import { FileTextIcon, VideoIcon, ImageIcon } from "lucide-react";
-import { Tags, Copy, Archive, Users, BarChart3, FileText } from "lucide-react";
+import {
+	Archive,
+	BarChart3,
+	Copy,
+	FileText,
+	FileTextIcon,
+	ImageIcon,
+	Tags,
+	Users,
+	VideoIcon,
+} from "lucide-react";
+import type { ReactNode } from "react";
 import type { MediaFile } from "./types";
-import { ReactNode } from "react";
 
 interface Collection {
 	id: string;
@@ -68,7 +77,8 @@ export const recentFiles: Omit<MediaFile, "path">[] = [
 		action: "mentioned you",
 		time: "27m ago",
 		icon: <FileTextIcon className="h-4 w-4 text-blue-500" />,
-		thumbnail: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&auto=format&fit=crop&q=60",
+		thumbnail:
+			"https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&auto=format&fit=crop&q=60",
 		aiTags: ["document", "business", "report"],
 		usage: {
 			views: 128,
@@ -85,7 +95,8 @@ export const recentFiles: Omit<MediaFile, "path">[] = [
 		action: "+4 others edited this",
 		time: "2h ago",
 		icon: <FileTextIcon className="h-4 w-4 text-orange-500" />,
-		thumbnail: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=500&auto=format&fit=crop&q=60",
+		thumbnail:
+			"https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=500&auto=format&fit=crop&q=60",
 		aiTags: ["presentation", "community", "social"],
 		usage: {
 			views: 256,
@@ -102,7 +113,8 @@ export const recentFiles: Omit<MediaFile, "path">[] = [
 		action: "recorded a meeting",
 		time: "Friday",
 		icon: <VideoIcon className="h-4 w-4 text-purple-500" />,
-		thumbnail: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=500&auto=format&fit=crop&q=60",
+		thumbnail:
+			"https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=500&auto=format&fit=crop&q=60",
 		aiTags: ["video", "meeting", "fundraising"],
 		usage: {
 			views: 89,
@@ -119,7 +131,8 @@ export const recentFiles: Omit<MediaFile, "path">[] = [
 		action: "assigned you a task",
 		time: "Thursday",
 		icon: <FileTextIcon className="h-4 w-4 text-green-500" />,
-		thumbnail: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500&auto=format&fit=crop&q=60",
+		thumbnail:
+			"https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=500&auto=format&fit=crop&q=60",
 		aiTags: ["spreadsheet", "finance", "quarterly"],
 		usage: {
 			views: 167,
@@ -136,7 +149,8 @@ export const recentFiles: Omit<MediaFile, "path">[] = [
 		action: "uploaded",
 		time: "2 days ago",
 		icon: <ImageIcon className="h-4 w-4 text-pink-500" />,
-		thumbnail: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&auto=format&fit=crop&q=60",
+		thumbnail:
+			"https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&auto=format&fit=crop&q=60",
 		aiTags: ["people", "team", "office"],
 		usage: {
 			views: 342,
@@ -158,7 +172,8 @@ export const recentFiles: Omit<MediaFile, "path">[] = [
 		action: "edited",
 		time: "3 days ago",
 		icon: <VideoIcon className="h-4 w-4 text-purple-500" />,
-		thumbnail: "https://images.unsplash.com/photo-1576267423048-15c0040fec78?w=500&auto=format&fit=crop&q=60",
+		thumbnail:
+			"https://images.unsplash.com/photo-1576267423048-15c0040fec78?w=500&auto=format&fit=crop&q=60",
 		aiTags: ["product", "marketing", "launch"],
 		usage: {
 			views: 567,

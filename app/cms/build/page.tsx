@@ -1,28 +1,133 @@
 "use client";
 
-import { useCallback, useState, useEffect, useRef } from "react";
-import ReactFlow, { Node, Edge, Background, NodeTypes, Connection, useEdgesState, MarkerType, useReactFlow, ReactFlowProvider, Handle, Position, ConnectionMode, NodeChange, applyNodeChanges, ReactFlowInstance, OnConnectStartParams } from "reactflow";
-import "reactflow/dist/style.css";
-import { Database, Key, Calendar, Tag, DollarSign, Hash, FileText, ShoppingCart, CreditCard, Plus, Minus, Maximize2, Trash2, PlusCircle, Users, ToggleLeft, Braces, ListOrdered, CircleDot } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type {
+	Connection,
+	Edge,
+	Node,
+	NodeChange,
+	NodeTypes,
+	OnConnectStartParams,
+	ReactFlowInstance,
+} from "reactflow";
+import {
+	applyNodeChanges,
+	ConnectionMode,
+	Handle,
+	MarkerType,
+	Position,
+	ReactFlowProvider,
+	useEdgesState,
+	useReactFlow,
+} from "reactflow";
+
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Dynamically import ReactFlow to reduce initial bundle size
+const ReactFlow = dynamic(
+	() => import("reactflow").then((mod) => mod.default),
+	{
+		ssr: false,
+		loading: () => (
+			<div className="space-y-4 p-6">
+				<Skeleton className="h-10 w-full" />
+				<Skeleton className="h-96 w-full" />
+				<div className="grid grid-cols-2 gap-4">
+					<Skeleton className="h-32 w-full" />
+					<Skeleton className="h-32 w-full" />
+				</div>
+			</div>
+		),
+	},
+);
+
+const Background = dynamic(
+	() => import("reactflow").then((mod) => mod.Background),
+	{
+		ssr: false,
+	},
+);
+
+// Import framer-motion normally but consider lazy loading for heavy animations
 import { motion } from "framer-motion";
+
+// Import reactflow styles
+import "reactflow/dist/style.css";
+
+import {
+	closestCenter,
+	DndContext,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
+import {
+	SortableContext,
+	useSortable,
+	verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { DragHandleDots2Icon } from "@radix-ui/react-icons";
+// Optimize icon imports - only import what's needed
+import {
+	Braces,
+	Calendar,
+	CircleDot,
+	CreditCard,
+	Database,
+	DollarSign,
+	FileText,
+	Hash,
+	Key,
+	ListOrdered,
+	Maximize2,
+	Minus,
+	Plus,
+	PlusCircle,
+	ShoppingCart,
+	Tag,
+	ToggleLeft,
+	Trash2,
+	Users,
+} from "lucide-react";
+import { AINode } from "@/components/build/ai-node";
 import { Button } from "@/components/ui/button";
+import { HoverTooltip } from "@/components/ui/hover-tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useBuildStore } from "./store";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
-import { HoverTooltip } from "@/components/ui/hover-tooltip";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { AINode } from "@/components/build/ai-node";
-import { DragHandleDots2Icon } from "@radix-ui/react-icons";
-import { useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { closestCenter } from "@dnd-kit/core";
+import { useBuildStore } from "./store";
 
 // PostgreSQL data types
-const POSTGRES_TYPES = ["UUID", "VARCHAR", "TEXT", "INTEGER", "BIGINT", "DECIMAL", "BOOLEAN", "DATE", "TIMESTAMP", "JSON", "JSONB", "ARRAY"] as const;
+const POSTGRES_TYPES = [
+	"UUID",
+	"VARCHAR",
+	"TEXT",
+	"INTEGER",
+	"BIGINT",
+	"DECIMAL",
+	"BOOLEAN",
+	"DATE",
+	"TIMESTAMP",
+	"JSON",
+	"JSONB",
+	"ARRAY",
+] as const;
 
 // Add friendly names mapping
 const TYPE_FRIENDLY_NAMES: Record<string, string> = {
@@ -63,44 +168,61 @@ type TableIcon = {
 
 // Add more icons as needed
 const TABLE_ICONS: TableIcon[] = [
-	{ value: "database", label: "Database", icon: <Database className="w-4 h-4" /> },
+	{
+		value: "database",
+		label: "Database",
+		icon: <Database className="w-4 h-4" />,
+	},
 	{ value: "users", label: "Users", icon: <Users className="w-4 h-4" /> },
-	{ value: "shopping-cart", label: "Products", icon: <ShoppingCart className="w-4 h-4" /> },
-	{ value: "credit-card", label: "Payments", icon: <CreditCard className="w-4 h-4" /> },
-	{ value: "file-text", label: "Orders", icon: <FileText className="w-4 h-4" /> },
+	{
+		value: "shopping-cart",
+		label: "Products",
+		icon: <ShoppingCart className="w-4 h-4" />,
+	},
+	{
+		value: "credit-card",
+		label: "Payments",
+		icon: <CreditCard className="w-4 h-4" />,
+	},
+	{
+		value: "file-text",
+		label: "Orders",
+		icon: <FileText className="w-4 h-4" />,
+	},
 	{ value: "tag", label: "Categories", icon: <Tag className="w-4 h-4" /> },
 ];
 
 // Get appropriate icon for field type
 const getFieldIcon = (label: string, type: string) => {
 	// First check for special field names
-	if (label.includes("id") && !label.includes("_id")) return <Key className="w-4 h-4 text-blue-400" />;
-	if (label.includes("_id")) return <Key className="w-4 h-4 text-green-400" />;
+	if (label.includes("id") && !label.includes("_id"))
+		return <Key className="w-4 h-4 text-primary" />;
+	if (label.includes("_id")) return <Key className="w-4 h-4 text-green-500" />;
 
 	// Then check field types
 	switch (type) {
 		case "UUID":
-			return <Key className="w-4 h-4 text-purple-400" />;
+			return <Key className="w-4 h-4 text-accent" />;
 		case "VARCHAR":
 		case "TEXT":
-			return <FileText className="w-4 h-4 text-yellow-400" />;
+			return <FileText className="w-4 h-4 text-yellow-500" />;
 		case "INTEGER":
 		case "BIGINT":
-			return <Hash className="w-4 h-4 text-blue-400" />;
+			return <Hash className="w-4 h-4 text-primary" />;
 		case "DECIMAL":
-			return <DollarSign className="w-4 h-4 text-green-400" />;
+			return <DollarSign className="w-4 h-4 text-green-500" />;
 		case "BOOLEAN":
-			return <ToggleLeft className="w-4 h-4 text-orange-400" />;
+			return <ToggleLeft className="w-4 h-4 text-orange-500" />;
 		case "DATE":
 		case "TIMESTAMP":
-			return <Calendar className="w-4 h-4 text-pink-400" />;
+			return <Calendar className="w-4 h-4 text-pink-500" />;
 		case "JSON":
 		case "JSONB":
-			return <Braces className="w-4 h-4 text-cyan-400" />;
+			return <Braces className="w-4 h-4 text-cyan-500" />;
 		case "ARRAY":
-			return <ListOrdered className="w-4 h-4 text-indigo-400" />;
+			return <ListOrdered className="w-4 h-4 text-indigo-500" />;
 		default:
-			return <CircleDot className="w-4 h-4 text-gray-400" />;
+			return <CircleDot className="w-4 h-4 text-muted-foreground" />;
 	}
 };
 
@@ -110,7 +232,8 @@ const TYPE_DESCRIPTIONS: Record<string, string> = {
 	VARCHAR: "A short piece of text, like someone's name or a title",
 	TEXT: "A long piece of text, like a description or a story",
 	INTEGER: "A whole number, like counting how many items you have",
-	BIGINT: "A really big whole number, for when you need to count lots of things",
+	BIGINT:
+		"A really big whole number, for when you need to count lots of things",
 	DECIMAL: "A number with decimal points, like money or measurements",
 	BOOLEAN: "A yes/no choice, like turning a light switch on or off",
 	DATE: "A calendar date, like your birthday",
@@ -124,7 +247,9 @@ const TYPE_DESCRIPTIONS: Record<string, string> = {
 function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 	const [isEditing, setIsEditing] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
-	const [selectedIcon, setSelectedIcon] = useState<TableIcon>(() => getInitialIcon(data.name));
+	const [selectedIcon, setSelectedIcon] = useState<TableIcon>(() =>
+		getInitialIcon(data.name),
+	);
 	const [isIconMenuOpen, setIsIconMenuOpen] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const { updateNodeData, nodes } = useBuildStore();
@@ -133,10 +258,20 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 	const [sourceNodeId, setSourceNodeId] = useState<string | null>(null);
 	const { getNode } = useReactFlow();
 
-	const filteredIcons = TABLE_ICONS.filter((icon) => icon.label.toLowerCase().includes(searchQuery.toLowerCase()) || icon.value.toLowerCase().includes(searchQuery.toLowerCase()));
+	const filteredIcons = TABLE_ICONS.filter(
+		(icon) =>
+			icon.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			icon.value.toLowerCase().includes(searchQuery.toLowerCase()),
+	);
 
 	function getInitialIcon(name: string): TableIcon {
-		return TABLE_ICONS.find((icon) => icon.label.toLowerCase() === name.toLowerCase() || icon.value === name.toLowerCase()) || TABLE_ICONS[0];
+		return (
+			TABLE_ICONS.find(
+				(icon) =>
+					icon.label.toLowerCase() === name.toLowerCase() ||
+					icon.value === name.toLowerCase(),
+			) || TABLE_ICONS[0]
+		);
 	}
 
 	useEffect(() => {
@@ -182,14 +317,17 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 
 	// Handle connection hover
 	const onConnectStart = useCallback(
-		(event: React.MouseEvent | TouchEvent, params: { nodeId: string; handleId: string }) => {
+		(
+			_event: React.MouseEvent | TouchEvent,
+			params: { nodeId: string; handleId: string },
+		) => {
 			const sourceNode = getNode(params.nodeId);
 			if (sourceNode) {
 				setSourceNodeName(sourceNode.data.name.toLowerCase());
 				setSourceNodeId(sourceNode.id);
 			}
 		},
-		[getNode]
+		[getNode],
 	);
 
 	const onConnectEnd = useCallback(() => {
@@ -205,7 +343,9 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 	// Handle mouse enter/leave for the entire node
 	const handleMouseEnter = useCallback(() => {
 		if (sourceNodeName && sourceNodeId) {
-			const existingConnection = data.details.some((field) => field.label === `${sourceNodeId}_id`);
+			const existingConnection = data.details.some(
+				(field) => field.label === `${sourceNodeId}_id`,
+			);
 
 			if (!existingConnection) {
 				setIsHoveredWithConnection(true);
@@ -216,7 +356,10 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 					type: "UUID",
 				};
 				updateNodeData(id, {
-					details: [...data.details.filter((field) => !field.id.startsWith("preview_")), previewField],
+					details: [
+						...data.details.filter((field) => !field.id.startsWith("preview_")),
+						previewField,
+					],
 				});
 			}
 		}
@@ -233,12 +376,17 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 	useEffect(() => {
 		const reactFlowWrapper = document.querySelector(".react-flow__pane");
 		if (reactFlowWrapper) {
+			// biome-ignore lint/suspicious/noExplicitAny: Event listener type mismatch
 			reactFlowWrapper.addEventListener("connectstart", onConnectStart as any);
 			reactFlowWrapper.addEventListener("connectend", onConnectEnd);
 		}
 		return () => {
 			if (reactFlowWrapper) {
-				reactFlowWrapper.removeEventListener("connectstart", onConnectStart as any);
+				// biome-ignore lint/suspicious/noExplicitAny: Event listener type mismatch
+				reactFlowWrapper.removeEventListener(
+					"connectstart",
+					onConnectStart as any,
+				);
 				reactFlowWrapper.removeEventListener("connectend", onConnectEnd);
 			}
 		};
@@ -247,11 +395,11 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 	return (
 		<motion.div
 			className="
-				w-[300px] bg-[#1b1b1b] rounded-lg border border-white/10 
-				relative hover:border-white/30 transition-colors shadow-lg
-				[&.selected]:border-blue-500 [&.selected]:border-2 [&.selected]:rounded-lg
-				focus:border-blue-500 focus:border-2 focus:rounded-lg focus:outline-none
-				focus-visible:border-blue-500 focus-visible:border-2 focus-visible:rounded-lg focus-visible:outline-none
+				w-[300px] bg-card rounded-lg border border-border 
+				relative hover:border-accent transition-colors shadow-lg
+				[&.selected]:border-primary [&.selected]:border-2 [&.selected]:rounded-lg
+				focus:border-primary focus:border-2 focus:rounded-lg focus:outline-none
+				focus-visible:border-primary focus-visible:border-2 focus-visible:rounded-lg focus-visible:outline-none
 			"
 			initial={false}
 			animate={{ scale: 1 }}
@@ -261,26 +409,46 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 			onMouseLeave={handleMouseLeave}
 			tabIndex={0}
 		>
-			<div className="p-4 text-white relative z-10">
-				<div className="flex items-start pb-2 mb-4 border-b border-gray-700/50">
+			<div className="p-4 text-card-foreground relative z-10">
+				<div className="flex items-start pb-2 mb-4 border-b border-border">
 					<Popover open={isIconMenuOpen} onOpenChange={setIsIconMenuOpen}>
 						<PopoverTrigger asChild>
-							<Button variant="ghost" size="sm" className="p-0 h-auto hover:bg-transparent group">
+							<Button
+								variant="ghost"
+								size="sm"
+								className="p-0 h-auto hover:bg-transparent group"
+							>
 								{selectedIcon.icon}
 								<span className="sr-only">Change table icon</span>
-								<div className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-black/90 text-xs text-white px-2 py-1 rounded -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">Change Icon</div>
+								<div className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-popover text-xs text-popover-foreground px-2 py-1 rounded -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+									Change Icon
+								</div>
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-[200px] p-2" align="start">
 							<div className="space-y-2">
-								<Input type="text" placeholder="Search icons..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="h-8" />
+								<Input
+									type="text"
+									placeholder="Search icons..."
+									value={searchQuery}
+									onChange={(e) => setSearchQuery(e.target.value)}
+									className="h-8"
+								/>
 								<ScrollArea className="h-[200px]">
 									<div className="space-y-1">
 										{filteredIcons.length === 0 ? (
-											<div className="py-2 px-1 text-sm text-gray-400">No icons found</div>
+											<div className="py-2 px-1 text-sm text-muted-foreground">
+												No icons found
+											</div>
 										) : (
 											filteredIcons.map((icon) => (
-												<Button key={icon.value} variant="ghost" size="sm" className="w-full justify-start gap-2 group" onClick={() => handleIconSelect(icon)}>
+												<Button
+													key={icon.value}
+													variant="ghost"
+													size="sm"
+													className="w-full justify-start gap-2 group"
+													onClick={() => handleIconSelect(icon)}
+												>
 													{icon.icon}
 													<span>{icon.label}</span>
 												</Button>
@@ -294,14 +462,37 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 
 					<div className="flex-1 ml-2">
 						{isEditing ? (
-							<input ref={inputRef} type="text" value={data.name} onChange={handleTitleChange} onBlur={handleTitleBlur} onKeyDown={handleKeyDown} className="w-full bg-transparent border-none text-lg font-bold leading-tight focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-1" />
+							<input
+								ref={inputRef}
+								type="text"
+								value={data.name}
+								onChange={handleTitleChange}
+								onBlur={handleTitleBlur}
+								onKeyDown={handleKeyDown}
+								className="w-full bg-transparent border-none text-lg font-bold leading-tight focus:outline-none focus:ring-1 focus:ring-primary rounded px-1 text-card-foreground"
+							/>
 						) : (
-							<div className="group cursor-pointer" onClick={handleTitleClick}>
-								<h4 className="text-lg font-bold leading-tight group-hover:text-blue-400 transition-colors">{data.name}</h4>
-								<div className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-black/90 text-xs text-white px-2 py-1 rounded -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">Click to edit name</div>
+							<div
+								className="group cursor-pointer"
+								onClick={handleTitleClick}
+								role="button"
+								tabIndex={0}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" || e.key === " ") {
+										e.preventDefault();
+										handleTitleClick();
+									}
+								}}
+							>
+								<h4 className="text-lg font-bold leading-tight group-hover:text-primary transition-colors text-card-foreground">
+									{data.name}
+								</h4>
+								<div className="absolute opacity-0 group-hover:opacity-100 transition-opacity bg-popover text-xs text-popover-foreground px-2 py-1 rounded -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+									Click to edit name
+								</div>
 							</div>
 						)}
-						<p className="text-xs text-gray-400">Database Table</p>
+						<p className="text-xs text-muted-foreground">Database Table</p>
 					</div>
 				</div>
 
@@ -310,7 +501,8 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 						const fieldIcon = getFieldIcon(detail.label, detail.type);
 						const description = getFieldDescription(detail.type);
 						const fieldName = detail.label.replace(/\s*\(.*?\)\s*/, "");
-						const isPrimaryKey = detail.label === "id" && detail.type === "UUID";
+						const isPrimaryKey =
+							detail.label === "id" && detail.type === "UUID";
 						const isForeignKey = detail.label.includes("_id");
 
 						return (
@@ -318,20 +510,32 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 								<li
 									className={`
 										relative flex items-start px-2 py-1.5 -mx-2 rounded group 
-										hover:bg-gray-800/30 transition-colors
-										${isPrimaryKey ? "bg-blue-500/10" : ""}
+										hover:bg-accent/30 transition-colors
+										${isPrimaryKey ? "bg-primary/10" : ""}
 										${isForeignKey ? "bg-green-500/10" : ""}
 									`}
 								>
 									<div className="flex items-center flex-1 min-w-0">
-										<span className="flex-shrink-0 mr-2 transition-transform group-hover:scale-110">{fieldIcon}</span>
+										<span className="flex-shrink-0 mr-2 transition-transform group-hover:scale-110">
+											{fieldIcon}
+										</span>
 										<span className="font-medium truncate">
 											{fieldName}
-											{isPrimaryKey && <span className="ml-2 text-xs text-blue-400 bg-blue-400/10 px-1.5 py-0.5 rounded">Primary Key</span>}
-											{isForeignKey && <span className="ml-2 text-xs text-green-400 bg-green-400/10 px-1.5 py-0.5 rounded">Foreign Key</span>}
+											{isPrimaryKey && (
+												<span className="ml-2 text-xs text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+													Primary Key
+												</span>
+											)}
+											{isForeignKey && (
+												<span className="ml-2 text-xs text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded">
+													Foreign Key
+												</span>
+											)}
 										</span>
 									</div>
-									<span className="flex-shrink-0 ml-2 text-xs text-gray-400 group-hover:text-gray-300">{description}</span>
+									<span className="flex-shrink-0 ml-2 text-xs text-muted-foreground group-hover:text-foreground">
+										{description}
+									</span>
 
 									{/* Source Handle (Left) - All fields can be sources */}
 									<Handle
@@ -339,21 +543,29 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 										position={Position.Left}
 										id={`${detail.id}-source`}
 										className={`
-											!w-4 !h-4 !-left-4 !border-2 !border-[#1b1b1b] 
-											hover:!bg-gray-300 !transition-colors !cursor-crosshair
+											!w-4 !h-4 !-left-4 !border-2 !border-card 
+											hover:!bg-accent !transition-colors !cursor-crosshair
 											before:content-[''] before:absolute before:w-12 before:h-12 
 											before:-left-4 before:-top-4 before:opacity-0
-											${isPrimaryKey ? "!bg-blue-400" : "!bg-gray-400"}
+											${isPrimaryKey ? "!bg-primary" : "!bg-muted-foreground"}
 										`}
 										isConnectable={true}
 										isValidConnection={(connection: Connection) => {
-											const targetNode = nodes.find((n) => n.id === connection.target);
+											const targetNode = nodes.find(
+												(n) => n.id === connection.target,
+											);
 											if (!targetNode) return false;
 											if (targetNode.type === "aiNode") return true;
 
 											// For primary keys, allow connecting to UUID fields
 											if (isPrimaryKey) {
-												const targetField = (targetNode.data as TableNodeData).details.find((f) => f.id === connection.targetHandle?.replace("-target", ""));
+												const targetField = (
+													targetNode.data as TableNodeData
+												).details.find(
+													(f) =>
+														f.id ===
+														connection.targetHandle?.replace("-target", ""),
+												);
 												return targetField?.type === "UUID";
 											}
 
@@ -368,22 +580,33 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 										position={Position.Right}
 										id={`${detail.id}-target`}
 										className={`
-											!w-4 !h-4 !-right-4 !border-2 !border-[#1b1b1b] 
-											hover:!bg-gray-300 !transition-colors !cursor-crosshair
+											!w-4 !h-4 !-right-4 !border-2 !border-card 
+											hover:!bg-accent !transition-colors !cursor-crosshair
 											before:content-[''] before:absolute before:w-12 before:h-12 
 											before:-right-4 before:-top-4 before:opacity-0
-											${isForeignKey ? "!bg-green-400" : "!bg-gray-400"}
+											${isForeignKey ? "!bg-green-500" : "!bg-muted-foreground"}
 										`}
 										isConnectable={true}
 										isValidConnection={(connection: Connection) => {
-											const sourceNode = nodes.find((n) => n.id === connection.source);
+											const sourceNode = nodes.find(
+												(n) => n.id === connection.source,
+											);
 											if (!sourceNode) return false;
 											if (sourceNode.type === "aiNode") return true;
 
 											// For UUID fields, allow receiving connections from primary keys
 											if (detail.type === "UUID") {
-												const sourceField = (sourceNode.data as TableNodeData).details.find((f) => f.id === connection.sourceHandle?.replace("-source", ""));
-												return sourceField?.label === "id" && sourceField?.type === "UUID";
+												const sourceField = (
+													sourceNode.data as TableNodeData
+												).details.find(
+													(f) =>
+														f.id ===
+														connection.sourceHandle?.replace("-source", ""),
+												);
+												return (
+													sourceField?.label === "id" &&
+													sourceField?.type === "UUID"
+												);
 											}
 
 											// For other fields, allow connecting from AI nodes only
@@ -399,9 +622,10 @@ function TableNode({ data, id }: { data: TableNodeData; id: string }) {
 
 			{/* Connection Preview */}
 			{isHoveredWithConnection && sourceNodeName && (
-				<div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/90 to-transparent">
-					<div className="text-xs text-white">
-						<span className="text-green-400">New Connection:</span> {sourceNodeName} �� {data.name}
+				<div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-foreground/90 to-transparent">
+					<div className="text-xs text-background">
+						<span className="text-green-400">New Connection:</span>{" "}
+						{sourceNodeName} �� {data.name}
 					</div>
 				</div>
 			)}
@@ -568,7 +792,11 @@ const initialNodes: Node<TableNodeData>[] = [
 			details: [
 				{ id: "id", label: "id", type: "UUID" },
 				{ id: "filename", label: "filename", type: "VARCHAR" },
-				{ id: "original_filename", label: "original_filename", type: "VARCHAR" },
+				{
+					id: "original_filename",
+					label: "original_filename",
+					type: "VARCHAR",
+				},
 				{ id: "mime_type", label: "mime_type", type: "VARCHAR" },
 				{ id: "size", label: "size", type: "INTEGER" },
 				{ id: "width", label: "width", type: "INTEGER" },
@@ -629,7 +857,11 @@ const initialNodes: Node<TableNodeData>[] = [
 				{ id: "description", label: "description", type: "TEXT" },
 				{ id: "fields", label: "fields", type: "JSONB" },
 				{ id: "success_message", label: "success_message", type: "TEXT" },
-				{ id: "notification_email", label: "notification_email", type: "VARCHAR" },
+				{
+					id: "notification_email",
+					label: "notification_email",
+					type: "VARCHAR",
+				},
 				{ id: "created_at", label: "created_at", type: "TIMESTAMP" },
 			],
 		},
@@ -755,8 +987,8 @@ const initialEdges: Edge[] = [
 		id: "roles-users",
 		source: "roles",
 		target: "users",
-		sourceHandle: "id",
-		targetHandle: "role_id",
+		sourceHandle: "id-source",
+		targetHandle: "role_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -769,8 +1001,8 @@ const initialEdges: Edge[] = [
 		id: "users-user_sessions",
 		source: "users",
 		target: "user_sessions",
-		sourceHandle: "id",
-		targetHandle: "user_id",
+		sourceHandle: "id-source",
+		targetHandle: "user_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -785,8 +1017,8 @@ const initialEdges: Edge[] = [
 		id: "users-pages",
 		source: "users",
 		target: "pages",
-		sourceHandle: "id",
-		targetHandle: "author_id",
+		sourceHandle: "id-source",
+		targetHandle: "author_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -799,8 +1031,8 @@ const initialEdges: Edge[] = [
 		id: "users-posts",
 		source: "users",
 		target: "posts",
-		sourceHandle: "id",
-		targetHandle: "author_id",
+		sourceHandle: "id-source",
+		targetHandle: "author_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -813,8 +1045,8 @@ const initialEdges: Edge[] = [
 		id: "categories-posts",
 		source: "categories",
 		target: "posts",
-		sourceHandle: "id",
-		targetHandle: "category_id",
+		sourceHandle: "id-source",
+		targetHandle: "category_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -827,8 +1059,8 @@ const initialEdges: Edge[] = [
 		id: "categories-categories",
 		source: "categories",
 		target: "categories",
-		sourceHandle: "id",
-		targetHandle: "parent_id",
+		sourceHandle: "id-source",
+		targetHandle: "parent_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -841,8 +1073,8 @@ const initialEdges: Edge[] = [
 		id: "posts-post_tags",
 		source: "posts",
 		target: "post_tags",
-		sourceHandle: "id",
-		targetHandle: "post_id",
+		sourceHandle: "id-source",
+		targetHandle: "post_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -855,8 +1087,8 @@ const initialEdges: Edge[] = [
 		id: "tags-post_tags",
 		source: "tags",
 		target: "post_tags",
-		sourceHandle: "id",
-		targetHandle: "tag_id",
+		sourceHandle: "id-source",
+		targetHandle: "tag_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -871,8 +1103,8 @@ const initialEdges: Edge[] = [
 		id: "users-media",
 		source: "users",
 		target: "media",
-		sourceHandle: "id",
-		targetHandle: "uploaded_by",
+		sourceHandle: "id-source",
+		targetHandle: "uploaded_by-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -887,8 +1119,8 @@ const initialEdges: Edge[] = [
 		id: "menus-menu_items",
 		source: "menus",
 		target: "menu_items",
-		sourceHandle: "id",
-		targetHandle: "menu_id",
+		sourceHandle: "id-source",
+		targetHandle: "menu_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -901,8 +1133,8 @@ const initialEdges: Edge[] = [
 		id: "menu_items-menu_items",
 		source: "menu_items",
 		target: "menu_items",
-		sourceHandle: "id",
-		targetHandle: "parent_id",
+		sourceHandle: "id-source",
+		targetHandle: "parent_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -917,8 +1149,8 @@ const initialEdges: Edge[] = [
 		id: "forms-form_submissions",
 		source: "forms",
 		target: "form_submissions",
-		sourceHandle: "id",
-		targetHandle: "form_id",
+		sourceHandle: "id-source",
+		targetHandle: "form_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -933,8 +1165,8 @@ const initialEdges: Edge[] = [
 		id: "pages-seo_settings",
 		source: "pages",
 		target: "seo_settings",
-		sourceHandle: "id",
-		targetHandle: "page_id",
+		sourceHandle: "id-source",
+		targetHandle: "page_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -947,8 +1179,8 @@ const initialEdges: Edge[] = [
 		id: "pages-page_views",
 		source: "pages",
 		target: "page_views",
-		sourceHandle: "id",
-		targetHandle: "page_id",
+		sourceHandle: "id-source",
+		targetHandle: "page_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -961,8 +1193,8 @@ const initialEdges: Edge[] = [
 		id: "users-page_views",
 		source: "users",
 		target: "page_views",
-		sourceHandle: "id",
-		targetHandle: "user_id",
+		sourceHandle: "id-source",
+		targetHandle: "user_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -977,8 +1209,8 @@ const initialEdges: Edge[] = [
 		id: "posts-comments",
 		source: "posts",
 		target: "comments",
-		sourceHandle: "id",
-		targetHandle: "post_id",
+		sourceHandle: "id-source",
+		targetHandle: "post_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -991,8 +1223,8 @@ const initialEdges: Edge[] = [
 		id: "users-comments",
 		source: "users",
 		target: "comments",
-		sourceHandle: "id",
-		targetHandle: "user_id",
+		sourceHandle: "id-source",
+		targetHandle: "user_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -1005,8 +1237,8 @@ const initialEdges: Edge[] = [
 		id: "comments-comments",
 		source: "comments",
 		target: "comments",
-		sourceHandle: "id",
-		targetHandle: "parent_id",
+		sourceHandle: "id-source",
+		targetHandle: "parent_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -1019,8 +1251,8 @@ const initialEdges: Edge[] = [
 		id: "users-reactions",
 		source: "users",
 		target: "reactions",
-		sourceHandle: "id",
-		targetHandle: "user_id",
+		sourceHandle: "id-source",
+		targetHandle: "user_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -1033,8 +1265,8 @@ const initialEdges: Edge[] = [
 		id: "posts-reactions",
 		source: "posts",
 		target: "reactions",
-		sourceHandle: "id",
-		targetHandle: "post_id",
+		sourceHandle: "id-source",
+		targetHandle: "post_id-target",
 		type: "smoothstep",
 		animated: true,
 		label: "1:N",
@@ -1052,9 +1284,26 @@ const nodeTypes: NodeTypes = {
 };
 
 // Field Item Component
-function FieldItem({ field, nodeId, isPrimaryKey, isForeignKey }: { field: { id: string; label: string; type: string }; nodeId: string; isPrimaryKey: boolean; isForeignKey: boolean }) {
+function FieldItem({
+	field,
+	nodeId,
+	isPrimaryKey,
+	isForeignKey,
+}: {
+	field: { id: string; label: string; type: string };
+	nodeId: string;
+	isPrimaryKey: boolean;
+	isForeignKey: boolean;
+}) {
 	const { updateField, deleteField } = useBuildStore();
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable({ id: field.id });
 
 	const style = {
 		transform: CSS.Transform.toString(transform),
@@ -1064,26 +1313,55 @@ function FieldItem({ field, nodeId, isPrimaryKey, isForeignKey }: { field: { id:
 
 	return (
 		<HoverTooltip content={TYPE_DESCRIPTIONS[field.type]}>
-			<div ref={setNodeRef} style={style} className="p-2 space-y-1.5 rounded-md border border-[#3a3a3a] bg-[#1f1f1f] hover:border-[#4a4a4a] transition-colors">
+			<div
+				ref={setNodeRef}
+				style={style}
+				className="p-2 space-y-1.5 rounded-md border border-border bg-card hover:border-accent transition-colors"
+			>
 				<div className="flex items-center gap-2">
-					<div {...attributes} {...listeners} className="cursor-grab hover:text-white text-gray-400">
+					<div
+						{...attributes}
+						{...listeners}
+						className="cursor-grab hover:text-foreground text-muted-foreground"
+					>
 						<DragHandleDots2Icon className="h-4 w-4" />
 					</div>
 					<div className="flex-1">
-						<Input value={field.label} onChange={(e) => updateField(nodeId, field.id, { label: e.target.value })} className="h-7 bg-[#2a2a2a] border-[#3a3a3a] hover:border-[#4a4a4a] focus:border-blue-500 text-white text-sm focus:ring-offset-0" />
+						<Input
+							value={field.label}
+							onChange={(e) =>
+								updateField(nodeId, field.id, { label: e.target.value })
+							}
+							className="h-7 bg-muted border-border hover:border-accent focus:border-primary text-foreground text-sm focus:ring-offset-0"
+						/>
 					</div>
-					<Button variant="ghost" size="sm" onClick={() => deleteField(nodeId, field.id)} className="h-7 w-7 p-0 text-gray-400 hover:text-red-400 hover:bg-red-400/10">
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={() => deleteField(nodeId, field.id)}
+						className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+					>
 						<Trash2 className="h-3.5 w-3.5" />
 					</Button>
 				</div>
 				<div className="flex items-center gap-2">
-					<Select defaultValue={field.type} value={field.type} onValueChange={(value) => updateField(nodeId, field.id, { type: value })}>
-						<SelectTrigger className="h-7 bg-[#2a2a2a] border-[#3a3a3a] hover:border-[#4a4a4a] focus:border-blue-500 text-white text-sm">
+					<Select
+						defaultValue={field.type}
+						value={field.type}
+						onValueChange={(value) =>
+							updateField(nodeId, field.id, { type: value })
+						}
+					>
+						<SelectTrigger className="h-7 bg-muted border-border hover:border-accent focus:border-primary text-foreground text-sm">
 							<SelectValue placeholder={TYPE_FRIENDLY_NAMES[field.type]} />
 						</SelectTrigger>
-						<SelectContent className="bg-[#2a2a2a] border-[#3a3a3a]">
+						<SelectContent className="bg-popover border-border">
 							{POSTGRES_TYPES.map((type) => (
-								<SelectItem key={type} value={type} className="text-sm text-white hover:bg-[#3a3a3a] focus:bg-[#3a3a3a] focus:text-white">
+								<SelectItem
+									key={type}
+									value={type}
+									className="text-sm text-popover-foreground hover:bg-accent focus:bg-accent focus:text-accent-foreground"
+								>
 									<div className="flex items-center gap-2">
 										{getFieldIcon("", type)}
 										<span>{TYPE_FRIENDLY_NAMES[type]}</span>
@@ -1093,7 +1371,13 @@ function FieldItem({ field, nodeId, isPrimaryKey, isForeignKey }: { field: { id:
 						</SelectContent>
 					</Select>
 				</div>
-				{(isPrimaryKey || isForeignKey) && <div className="text-[10px] font-medium text-gray-500">{isPrimaryKey ? "This is the main ID - Like a name tag that other tables can use to find this item" : "This connects to another table - Like saying this belongs to something else"}</div>}
+				{(isPrimaryKey || isForeignKey) && (
+					<div className="text-[10px] font-medium text-muted-foreground">
+						{isPrimaryKey
+							? "This is the main ID - Like a name tag that other tables can use to find this item"
+							: "This connects to another table - Like saying this belongs to something else"}
+					</div>
+				)}
 			</div>
 		</HoverTooltip>
 	);
@@ -1101,14 +1385,22 @@ function FieldItem({ field, nodeId, isPrimaryKey, isForeignKey }: { field: { id:
 
 // SidebarContent Component
 function SidebarContent({ node }: { node: Node<TableNodeData> }) {
-	const { updateNodeData, addField, updateField, deleteField } = useBuildStore();
-	const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor));
+	const { updateNodeData, addField, updateField, deleteField } =
+		useBuildStore();
+	const sensors = useSensors(
+		useSensor(PointerSensor),
+		useSensor(KeyboardSensor),
+	);
 
 	const handleDragEnd = (event: any) => {
 		const { active, over } = event;
 		if (active.id !== over.id) {
-			const oldIndex = node.data.details.findIndex((field) => field.id === active.id);
-			const newIndex = node.data.details.findIndex((field) => field.id === over.id);
+			const oldIndex = node.data.details.findIndex(
+				(field) => field.id === active.id,
+			);
+			const newIndex = node.data.details.findIndex(
+				(field) => field.id === over.id,
+			);
 			const newDetails = [...node.data.details];
 			const [removed] = newDetails.splice(oldIndex, 1);
 			newDetails.splice(newIndex, 0, removed);
@@ -1120,20 +1412,24 @@ function SidebarContent({ node }: { node: Node<TableNodeData> }) {
 		<div className="h-full p-3 space-y-4">
 			<div className="space-y-3">
 				<div className="space-y-1.5">
-					<Label className="text-xs font-medium text-white">Table Name</Label>
+					<Label className="text-xs font-medium text-foreground">
+						Table Name
+					</Label>
 					<Input
 						value={node.data.name}
 						onChange={(e) => {
 							updateNodeData(node.id, { name: e.target.value });
 						}}
-						className="h-8 bg-[#2a2a2a] border-[#3a3a3a] hover:border-[#4a4a4a] focus:border-blue-500 text-white text-sm font-medium"
+						className="h-8 bg-muted border-border hover:border-accent focus:border-primary text-foreground text-sm font-medium"
 					/>
-					<p className="text-xs text-gray-400">Database Table</p>
+					<p className="text-xs text-muted-foreground">Database Table</p>
 				</div>
 
 				<div className="space-y-2">
 					<div className="flex items-center justify-between">
-						<Label className="text-xs font-medium text-white">Fields</Label>
+						<Label className="text-xs font-medium text-foreground">
+							Fields
+						</Label>
 						<Button
 							variant="secondary"
 							size="sm"
@@ -1144,20 +1440,36 @@ function SidebarContent({ node }: { node: Node<TableNodeData> }) {
 									type: "VARCHAR",
 								})
 							}
-							className="h-7 text-xs px-2.5 bg-blue-500 hover:bg-blue-600 text-white border-0"
+							className="h-7 text-xs px-2.5 bg-primary hover:bg-primary/90 text-primary-foreground border-0"
 						>
 							<PlusCircle className="w-3.5 h-3.5 mr-1.5" />
 							Add Field
 						</Button>
 					</div>
 
-					<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-						<SortableContext items={node.data.details.map((field) => field.id)} strategy={verticalListSortingStrategy}>
+					<DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						onDragEnd={handleDragEnd}
+					>
+						<SortableContext
+							items={node.data.details.map((field) => field.id)}
+							strategy={verticalListSortingStrategy}
+						>
 							<div className="space-y-2">
 								{node.data.details.map((field) => {
-									const isPrimaryKey = field.label.includes("id") && !field.label.includes("_id");
+									const isPrimaryKey =
+										field.label.includes("id") && !field.label.includes("_id");
 									const isForeignKey = field.label.includes("_id");
-									return <FieldItem key={field.id} field={field} nodeId={node.id} isPrimaryKey={isPrimaryKey} isForeignKey={isForeignKey} />;
+									return (
+										<FieldItem
+											key={field.id}
+											field={field}
+											nodeId={node.id}
+											isPrimaryKey={isPrimaryKey}
+											isForeignKey={isForeignKey}
+										/>
+									);
 								})}
 							</div>
 						</SortableContext>
@@ -1169,7 +1481,15 @@ function SidebarContent({ node }: { node: Node<TableNodeData> }) {
 }
 
 // Add this component near the top with other components
-function NodeSelector({ position, onSelect, onClose }: { position: { x: number; y: number }; onSelect: (nodeId: string) => void; onClose: () => void }) {
+function NodeSelector({
+	position,
+	onSelect,
+	onClose,
+}: {
+	position: { x: number; y: number };
+	onSelect: (nodeId: string) => void;
+	onClose: () => void;
+}) {
 	const { nodes } = useBuildStore();
 	const [searchQuery, setSearchQuery] = useState("");
 	const [isVisible, setIsVisible] = useState(false);
@@ -1187,7 +1507,9 @@ function NodeSelector({ position, onSelect, onClose }: { position: { x: number; 
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, [onClose]);
 
-	const filteredNodes = nodes.filter((node) => node.data.name.toLowerCase().includes(searchQuery.toLowerCase()));
+	const filteredNodes = nodes.filter((node) =>
+		node.data.name.toLowerCase().includes(searchQuery.toLowerCase()),
+	);
 
 	return (
 		<div
@@ -1199,19 +1521,37 @@ function NodeSelector({ position, onSelect, onClose }: { position: { x: number; 
 				transformOrigin: "top left",
 			}}
 		>
-			<motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.95 }} className="node-selector w-48 bg-[#1b1b1b] border border-[#3a3a3a] rounded-lg shadow-xl">
+			<motion.div
+				initial={{ opacity: 0, scale: 0.95 }}
+				animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.95 }}
+				className="node-selector w-48 bg-popover border border-border rounded-lg shadow-xl"
+			>
 				<div className="p-2">
-					<Input type="text" placeholder="Search nodes..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="h-7 bg-[#2a2a2a] border-[#3a3a3a] hover:border-[#4a4a4a] focus:border-blue-500 text-white placeholder:text-gray-400 text-xs" autoFocus />
+					<Input
+						type="text"
+						placeholder="Search nodes..."
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						className="h-7 bg-muted border-border hover:border-accent focus:border-primary text-foreground placeholder:text-muted-foreground text-xs"
+						autoFocus
+					/>
 				</div>
 				<ScrollArea className="h-48">
 					<div className="p-1">
 						{filteredNodes.length === 0 ? (
-							<div className="px-2 py-1 text-xs text-gray-400">No nodes found</div>
+							<div className="px-2 py-1 text-xs text-muted-foreground">
+								No nodes found
+							</div>
 						) : (
 							filteredNodes.map((node) => (
-								<Button key={node.id} variant="ghost" className="w-full justify-start gap-2 px-2 py-1 text-xs text-left text-gray-100 hover:bg-[#2a2a2a] hover:text-white transition-colors" onClick={() => onSelect(node.id)}>
+								<Button
+									key={node.id}
+									variant="ghost"
+									className="w-full justify-start gap-2 px-2 py-1 text-xs text-left text-popover-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+									onClick={() => onSelect(node.id)}
+								>
 									<div className="flex items-center gap-2">
-										<Database className="w-3 h-3 text-gray-400" />
+										<Database className="w-3 h-3 text-muted-foreground" />
 										<span className="font-medium">{node.data.name}</span>
 									</div>
 								</Button>
@@ -1225,17 +1565,45 @@ function NodeSelector({ position, onSelect, onClose }: { position: { x: number; 
 }
 
 function Flow() {
-	const { selectedNode, setSelectedNode, setRightSidebarContent, openRightSidebar, updateNodePosition, loadNodePositions, findAvailablePosition, initializePositions, nodes, setNodes } = useBuildStore();
+	const {
+		selectedNode,
+		setSelectedNode,
+		setRightSidebarContent,
+		openRightSidebar,
+		updateNodePosition,
+		loadNodePositions,
+		findAvailablePosition,
+		initializePositions,
+		nodes,
+		setNodes,
+	} = useBuildStore();
 	const { toast } = useToast();
-	const { zoomIn: flowZoomIn, zoomOut: flowZoomOut, fitView, setCenter, getViewport } = useReactFlow();
+	const {
+		zoomIn: flowZoomIn,
+		zoomOut: flowZoomOut,
+		fitView,
+		setCenter,
+		getViewport,
+	} = useReactFlow();
 	const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-	const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+	const [reactFlowInstance, setReactFlowInstance] =
+		useState<ReactFlowInstance | null>(null);
 	const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
+	// Memoize nodeTypes to prevent React Flow warning about new object creation
+	const memoizedNodeTypes = useMemo(
+		() => ({
+			tableNode: TableNode,
+			aiNode: AINode,
+		}),
+		[],
+	);
+
 	// Add these new states at the top of the Flow component
-	const [sourceNodeName, setSourceNodeName] = useState<string | null>(null);
+	const [_sourceNodeName, setSourceNodeName] = useState<string | null>(null);
 	const [sourceNodeId, setSourceNodeId] = useState<string | null>(null);
-	const [isHoveredWithConnection, setIsHoveredWithConnection] = useState(false);
+	const [_isHoveredWithConnection, setIsHoveredWithConnection] =
+		useState(false);
 	const [nodeSelector, setNodeSelector] = useState<{
 		visible: boolean;
 		position: { x: number; y: number };
@@ -1278,10 +1646,17 @@ function Flow() {
 
 			// Check if we're dropping on an edge
 			const droppedOnEdge = edges.find((edge) => {
-				const edgeElement = document.querySelector(`[data-edge-id="${edge.id}"]`);
+				const edgeElement = document.querySelector(
+					`[data-edge-id="${edge.id}"]`,
+				);
 				if (!edgeElement) return false;
 				const edgeBounds = edgeElement.getBoundingClientRect();
-				return event.clientX >= edgeBounds.left && event.clientX <= edgeBounds.right && event.clientY >= edgeBounds.top && event.clientY <= edgeBounds.bottom;
+				return (
+					event.clientX >= edgeBounds.left &&
+					event.clientX <= edgeBounds.right &&
+					event.clientY >= edgeBounds.top &&
+					event.clientY <= edgeBounds.bottom
+				);
 			});
 
 			if (aiType && droppedOnEdge) {
@@ -1335,7 +1710,11 @@ function Flow() {
 				};
 
 				// Remove old edge and add new node and edges
-				setEdges((eds) => eds.filter((e) => e.id !== droppedOnEdge.id).concat([newEdge1, newEdge2]));
+				setEdges((eds) =>
+					eds
+						.filter((e) => e.id !== droppedOnEdge.id)
+						.concat([newEdge1, newEdge2]),
+				);
 				setNodes((nds) => nds.concat(newNode));
 				return;
 			}
@@ -1354,7 +1733,7 @@ function Flow() {
 				setNodes((nds) => nds.concat(newNode));
 			}
 		},
-		[reactFlowInstance, edges, setNodes, setEdges]
+		[reactFlowInstance, edges, setNodes, setEdges],
 	);
 
 	// Initialize positions from localStorage
@@ -1374,32 +1753,40 @@ function Flow() {
 
 	// Handle node drag stop
 	const handleNodeDragStop = useCallback(
-		(event: React.MouseEvent, node: Node<TableNodeData>) => {
+		(_event: React.MouseEvent, node: Node<TableNodeData>) => {
 			const { id, position } = node;
 			updateNodePosition(id, position);
 		},
-		[updateNodePosition]
+		[updateNodePosition],
 	);
 
 	// Handle node selection
 	const handleNodesChange = useCallback(
 		(changes: NodeChange[]) => {
-			const selectionChange = changes.find((change) => change.type === "select") as { type: "select"; id: string; selected: boolean } | undefined;
+			const selectionChange = changes.find(
+				(change) => change.type === "select",
+			) as { type: "select"; id: string; selected: boolean } | undefined;
 
 			if (selectionChange) {
 				const node = nodes.find((n) => n.id === selectionChange.id);
 				if (selectionChange.selected) {
 					setSelectedNode(node || null);
 					openRightSidebar();
-				} else if (changes.length === 1 && !changes.some((change) => change.type === "select" && change.selected)) {
+				} else if (
+					changes.length === 1 &&
+					!changes.some((change) => change.type === "select" && change.selected)
+				) {
 					setSelectedNode(null);
 				}
 			}
 
-			const nextNodes = applyNodeChanges(changes, nodes) as Node<TableNodeData>[];
+			const nextNodes = applyNodeChanges(
+				changes,
+				nodes,
+			) as Node<TableNodeData>[];
 			setNodes(nextNodes);
 		},
-		[nodes, setNodes, setSelectedNode, openRightSidebar]
+		[nodes, setNodes, setSelectedNode, openRightSidebar],
 	);
 
 	// Function to add a new node
@@ -1418,17 +1805,20 @@ function Flow() {
 				},
 			};
 
-               setNodes((nds: Node[]) => [...nds, newNode]);
+			setNodes((nds: Node[]) => [...nds, newNode]);
 			updateNodePosition(newNodeId, position);
 
 			// Use RAF to ensure DOM is updated before animation
 			requestAnimationFrame(() => {
-				setCenter(position.x + 150, position.y + 100, { zoom: 1, duration: 1000 });
+				setCenter(position.x + 150, position.y + 100, {
+					zoom: 1,
+					duration: 1000,
+				});
 			});
 
 			return newNode;
 		},
-		[nodes, setNodes, setCenter, findAvailablePosition, updateNodePosition]
+		[nodes, setNodes, setCenter, findAvailablePosition, updateNodePosition],
 	);
 
 	// Handle keyboard shortcuts
@@ -1447,7 +1837,12 @@ function Flow() {
 	// Update the onConnect function to handle connections properly
 	const onConnect = useCallback(
 		(params: Connection) => {
-			if (!params.source || !params.target || !params.sourceHandle || !params.targetHandle) {
+			if (
+				!params.source ||
+				!params.target ||
+				!params.sourceHandle ||
+				!params.targetHandle
+			) {
 				toastRef.current({
 					title: "Connection Failed",
 					description: "Please ensure both source and target are selected.",
@@ -1505,13 +1900,20 @@ function Flow() {
 			}
 
 			// For table nodes, validate primary key to foreign key connections
-			const sourceField = sourceNode.data.details.find((field: { id: string; label: string; type: string }) => field.id === params.sourceHandle);
-			const targetField = targetNode.data.details.find((field: { id: string; label: string; type: string }) => field.id === params.targetHandle);
+			const sourceField = sourceNode.data.details.find(
+				(field: { id: string; label: string; type: string }) =>
+					field.id === params.sourceHandle,
+			);
+			const targetField = targetNode.data.details.find(
+				(field: { id: string; label: string; type: string }) =>
+					field.id === params.targetHandle,
+			);
 
 			if (!sourceField || !targetField) {
 				toastRef.current({
 					title: "Connection Error",
-					description: "Could not find the fields to connect. Please try again.",
+					description:
+						"Could not find the fields to connect. Please try again.",
 					variant: "destructive",
 				});
 				return;
@@ -1521,7 +1923,8 @@ function Flow() {
 			if (!(sourceField.label === "id" && sourceField.type === "UUID")) {
 				toastRef.current({
 					title: "Invalid Connection",
-					description: "You can only connect from a primary key (blue) to create relationships.",
+					description:
+						"You can only connect from a primary key (blue) to create relationships.",
 					variant: "destructive",
 				});
 				return;
@@ -1555,16 +1958,18 @@ function Flow() {
 						...node,
 						data: {
 							...node.data,
-							details: node.data.details.map((field: { id: string; label: string; type: string }) => {
-								if (field.id === params.targetHandle) {
-									return {
-										...field,
-										label: `${sourceNodeId}_id`,
-										type: "UUID",
-									};
-								}
-								return field;
-							}),
+							details: node.data.details.map(
+								(field: { id: string; label: string; type: string }) => {
+									if (field.id === params.targetHandle) {
+										return {
+											...field,
+											label: `${sourceNodeId}_id`,
+											type: "UUID",
+										};
+									}
+									return field;
+								},
+							),
 						},
 					};
 				}
@@ -1579,7 +1984,7 @@ function Flow() {
 				description: `Successfully connected ${sourceNode.data.name} to ${targetNode.data.name}!`,
 			});
 		},
-		[nodes, setEdges, setNodes]
+		[nodes, setEdges, setNodes],
 	);
 
 	// Update sidebar content when node is selected
@@ -1604,34 +2009,43 @@ function Flow() {
 	}, [addNewNode]);
 
 	// Add this new handler
-       const onConnectStart = useCallback(
-               (event: React.MouseEvent | React.TouchEvent, params: OnConnectStartParams) => {
-                       if (params.nodeId && params.handleId) {
-                               const sourceNode = nodes.find((n) => n.id === params.nodeId);
-                               if (sourceNode) {
-                                       setSourceNodeName(sourceNode.data.name.toLowerCase());
-                                       setSourceNodeId(params.nodeId);
-                               }
-                       }
-               },
-               [nodes]
-       );
+	const onConnectStart = useCallback(
+		(
+			_event: React.MouseEvent | React.TouchEvent,
+			params: OnConnectStartParams,
+		) => {
+			if (params.nodeId && params.handleId) {
+				const sourceNode = nodes.find((n) => n.id === params.nodeId);
+				if (sourceNode) {
+					setSourceNodeName(sourceNode.data.name.toLowerCase());
+					setSourceNodeId(params.nodeId);
+				}
+			}
+		},
+		[nodes],
+	);
 
 	// Add this new handler
-       const onConnectEnd = useCallback(
-               (event: MouseEvent | TouchEvent) => {
-                       const target = event?.target as Element | null;
-                       if (!target) return;
+	const onConnectEnd = useCallback(
+		(event: MouseEvent | TouchEvent) => {
+			const target = event?.target as Element | null;
+			if (!target) return;
 
-                       const targetIsNode = target.closest(".react-flow__node");
-                       const targetIsPane = target.classList.contains("react-flow__pane");
+			const targetIsNode = target.closest(".react-flow__node");
+			const targetIsPane = target.classList.contains("react-flow__pane");
 
 			if (!targetIsNode && targetIsPane && sourceNodeId) {
 				// Only show selector if we have a source node
 				const bounds = reactFlowWrapper.current?.getBoundingClientRect();
 				const position = {
-					x: event instanceof MouseEvent ? event.clientX - (bounds?.left || 0) : 0,
-					y: event instanceof MouseEvent ? event.clientY - (bounds?.top || 0) : 0,
+					x:
+						event instanceof MouseEvent
+							? event.clientX - (bounds?.left || 0)
+							: 0,
+					y:
+						event instanceof MouseEvent
+							? event.clientY - (bounds?.top || 0)
+							: 0,
 				};
 
 				setNodeSelector({
@@ -1648,7 +2062,7 @@ function Flow() {
 			setSourceNodeId(null);
 			setIsHoveredWithConnection(false);
 		},
-		[sourceNodeId]
+		[sourceNodeId],
 	);
 
 	// Add this new handler
@@ -1666,66 +2080,97 @@ function Flow() {
 			}
 			setNodeSelector((prev) => ({ ...prev, visible: false }));
 		},
-		[nodeSelector, onConnect]
+		[nodeSelector, onConnect],
 	);
 
 	return (
-		<div className="h-full relative bg-[#0a0a0a]" ref={reactFlowWrapper}>
+		<div className="h-full relative bg-background" ref={reactFlowWrapper}>
 			{/* Custom Zoom Controls */}
 			<div className="absolute z-20 flex flex-col gap-2 -translate-y-1/2 left-4 top-1/2">
-				<Button variant="ghost" size="icon" onClick={() => flowZoomIn()} className="bg-[#1a1a1a] border border-[#2a2a2a] hover:bg-[#2a2a2a] text-white">
+				<Button
+					variant="ghost"
+					size="icon"
+					onClick={() => flowZoomIn()}
+					className="bg-card border border-border hover:bg-accent text-foreground"
+				>
 					<Plus className="w-4 h-4" />
 				</Button>
-				<Button variant="ghost" size="icon" onClick={() => flowZoomOut()} className="bg-[#1a1a1a] border border-[#2a2a2a] hover:bg-[#2a2a2a] text-white">
+				<Button
+					variant="ghost"
+					size="icon"
+					onClick={() => flowZoomOut()}
+					className="bg-card border border-border hover:bg-accent text-foreground"
+				>
 					<Minus className="w-4 h-4" />
 				</Button>
-				<Button variant="ghost" size="icon" onClick={() => fitView({ padding: 0.2 })} className="bg-[#1a1a1a] border border-[#2a2a2a] hover:bg-[#2a2a2a] text-white">
+				<Button
+					variant="ghost"
+					size="icon"
+					onClick={() => fitView({ padding: 0.2 })}
+					className="bg-card border border-border hover:bg-accent text-foreground"
+				>
 					<Maximize2 className="w-4 h-4" />
 				</Button>
 			</div>
 
-			<ReactFlow
-				nodes={nodes}
-				edges={edges}
-				onNodesChange={handleNodesChange}
-				onEdgesChange={onEdgesChange}
-				onConnect={onConnect}
-				onConnectStart={onConnectStart}
-				onConnectEnd={onConnectEnd}
-				onNodeDragStop={handleNodeDragStop}
-				nodeTypes={nodeTypes}
-				onInit={setReactFlowInstance}
-				onDrop={onDrop}
-				onDragOver={onDragOver}
-				fitView
-				fitViewOptions={{ padding: 0.5, maxZoom: 0.8 }}
-				defaultViewport={{ x: 0, y: 0, zoom: 0.7 }}
-				minZoom={0.2}
-				maxZoom={4}
-				defaultEdgeOptions={{
-					type: "smoothstep",
-					style: { stroke: "#3b82f6", strokeWidth: 3 },
-					animated: true,
-					markerEnd: {
-						type: MarkerType.ArrowClosed,
-						color: "#3b82f6",
-						width: 20,
-						height: 20,
-					},
-					labelStyle: { fill: "#3b82f6", fontWeight: "bold" },
-					labelBgStyle: { fill: "#1b1b1b" },
-				}}
-				proOptions={{ hideAttribution: true }}
-				className="react-flow-dark h-full"
-				snapToGrid
-				snapGrid={[16, 16]}
-				connectOnClick={false}
-				selectNodesOnDrag={false}
-				connectionMode={ConnectionMode.Loose}
+			<Suspense
+				fallback={
+					<div className="flex items-center justify-center h-full bg-background">
+						<div className="text-muted-foreground">Loading...</div>
+					</div>
+				}
 			>
-				<Background color="#2a2a2a" gap={16} />
-				{nodeSelector.visible && <NodeSelector position={nodeSelector.position} onSelect={handleNodeSelection} onClose={() => setNodeSelector((prev) => ({ ...prev, visible: false }))} />}
-			</ReactFlow>
+				<ReactFlow
+					nodes={nodes}
+					edges={edges}
+					onNodesChange={handleNodesChange}
+					onEdgesChange={onEdgesChange}
+					onConnect={onConnect}
+					onConnectStart={onConnectStart}
+					onConnectEnd={onConnectEnd}
+					onNodeDragStop={handleNodeDragStop}
+					nodeTypes={memoizedNodeTypes}
+					onInit={setReactFlowInstance}
+					onDrop={onDrop}
+					onDragOver={onDragOver}
+					fitView
+					fitViewOptions={{ padding: 0.5, maxZoom: 0.8 }}
+					defaultViewport={{ x: 0, y: 0, zoom: 0.7 }}
+					minZoom={0.2}
+					maxZoom={4}
+					defaultEdgeOptions={{
+						type: "smoothstep",
+						style: { stroke: "#3b82f6", strokeWidth: 3 },
+						animated: true,
+						markerEnd: {
+							type: MarkerType.ArrowClosed,
+							color: "#3b82f6",
+							width: 20,
+							height: 20,
+						},
+						labelStyle: { fill: "#3b82f6", fontWeight: "bold" },
+						labelBgStyle: { fill: "#1b1b1b" },
+					}}
+					proOptions={{ hideAttribution: true }}
+					className="react-flow-dark h-full"
+					snapToGrid
+					snapGrid={[16, 16]}
+					connectOnClick={false}
+					selectNodesOnDrag={false}
+					connectionMode={ConnectionMode.Loose}
+				>
+					<Background color="hsl(var(--muted))" gap={16} />
+					{nodeSelector.visible && (
+						<NodeSelector
+							position={nodeSelector.position}
+							onSelect={handleNodeSelection}
+							onClose={() =>
+								setNodeSelector((prev) => ({ ...prev, visible: false }))
+							}
+						/>
+					)}
+				</ReactFlow>
+			</Suspense>
 		</div>
 	);
 }
@@ -1734,7 +2179,20 @@ export default function BuildPage() {
 	return (
 		<div className="h-full w-full">
 			<ReactFlowProvider>
-				<Flow />
+				<Suspense
+					fallback={
+						<div className="space-y-4 p-6">
+							<Skeleton className="h-10 w-full" />
+							<Skeleton className="h-96 w-full" />
+							<div className="grid grid-cols-2 gap-4">
+								<Skeleton className="h-32 w-full" />
+								<Skeleton className="h-32 w-full" />
+							</div>
+						</div>
+					}
+				>
+					<Flow />
+				</Suspense>
 			</ReactFlowProvider>
 		</div>
 	);

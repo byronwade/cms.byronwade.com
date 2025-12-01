@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { schema } from "@nodl/core";
+import { z } from "zod";
 
 // Basic schemas
 export const DateRangeSchema = schema(
@@ -7,10 +7,13 @@ export const DateRangeSchema = schema(
 	z.object({
 		start: z.date(),
 		end: z.date(),
-	})
+	}),
 );
 
-export const MetricTypeSchema = schema("MetricType", z.enum(["users", "revenue", "conversion"]));
+export const MetricTypeSchema = schema(
+	"MetricType",
+	z.enum(["users", "revenue", "conversion"]),
+);
 
 export const TimeSeriesDataSchema = schema(
 	"TimeSeriesData",
@@ -18,8 +21,8 @@ export const TimeSeriesDataSchema = schema(
 		z.object({
 			timestamp: z.date(),
 			value: z.number(),
-		})
-	)
+		}),
+	),
 );
 
 export const PageViewSchema = schema(
@@ -28,7 +31,7 @@ export const PageViewSchema = schema(
 		page: z.string(),
 		views: z.number(),
 		percentage: z.number(),
-	})
+	}),
 );
 
 export const ActivitySchema = schema(
@@ -37,7 +40,7 @@ export const ActivitySchema = schema(
 		type: z.string(),
 		timestamp: z.date(),
 		details: z.string(),
-	})
+	}),
 );
 
 export const AnalyticsSummarySchema = schema(
@@ -46,8 +49,11 @@ export const AnalyticsSummarySchema = schema(
 		totalUsers: z.number(),
 		totalRevenue: z.number(),
 		conversionRate: z.number(),
-                timeSeriesData: TimeSeriesDataSchema as any,
-                topPages: z.array(PageViewSchema as any),
-                recentActivity: z.array(ActivitySchema as any),
-        })
+		// biome-ignore lint/suspicious/noExplicitAny: Zod schema type inference
+		timeSeriesData: TimeSeriesDataSchema as any,
+		// biome-ignore lint/suspicious/noExplicitAny: Zod schema type inference
+		topPages: z.array(PageViewSchema as any),
+		// biome-ignore lint/suspicious/noExplicitAny: Zod schema type inference
+		recentActivity: z.array(ActivitySchema as any),
+	}),
 );

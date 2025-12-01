@@ -1,7 +1,7 @@
-# .cusrorules
+# .cursorrules
 
 # Purpose:
-# This repository is dedicated to creating a CMS frontend using Next.js with NO backend functionality.
+# This repository is dedicated to creating a CMS frontend using Next.js 16 with NO backend functionality.
 # The system is designed with a server-first approach to leverage the performance and scalability of Next.js Server Components.
 # All data interactions are strictly handled through `actions` folder files (e.g., `getCustomers`, `getInvoices`) to simulate backend functionality.
 # The project mimics the modular, user-friendly design and functionality of Payload 3.0 and WordPress, focusing entirely on frontend features.
@@ -10,6 +10,39 @@
 # - The application is built with server-first components to optimize performance.
 # - All data is simulated or fetched through static or pre-defined functions in the `actions` folder.
 # - Backend logic, API calls, and database integrations are strictly prohibited.
+
+# ============================================================================
+# NEXT.JS 16 BEST PRACTICES - MANDATORY REQUIREMENTS
+# ============================================================================
+
+# Component Architecture Principles:
+1. SERVER COMPONENTS FIRST - Always default to Server Components
+   - Every new component MUST start as a Server Component
+   - Only add "use client" when interactivity is absolutely required
+   - Server Components cannot use hooks, event handlers, or browser APIs
+   - Server Components can import and render Client Components
+
+2. COMPONENT ISOLATION - Always isolate and improve components
+   - Break down large components into smaller, focused, reusable pieces
+   - Each component should have a single responsibility
+   - Extract logic into custom hooks when appropriate
+   - Create shared components in `components/ui/` for common patterns
+   - Components should be self-contained and testable
+
+3. LOADING STATES - NEVER use full-page loading indicators
+   - PROHIBITED: Full-screen spinners, full-page loading overlays, or blocking loading states
+   - REQUIRED: Use skeleton loaders for content placeholders
+   - Use Suspense boundaries with skeleton fallbacks at the component level
+   - Loading states should be inline and contextual
+   - Example: Use `<Skeleton />` from `@/components/ui/skeleton` for content placeholders
+   - Example: Use `loading.tsx` files ONLY for route-level loading (not full-page spinners)
+
+4. STATEFUL COMPONENTS - Make components stateful when needed
+   - Buttons, dialogs, modals, dropdowns, and interactive elements MUST be stateful
+   - Use React hooks (useState, useCallback, useMemo) appropriately
+   - Client Components should manage their own state
+   - Use Zustand or Context only for shared state across components
+   - Stateful components MUST be Client Components ("use client")
 
 # Key Principles:
 - Server Components are the default for all layouts, pages, and reusable components unless client-side interactivity is required.
@@ -75,10 +108,145 @@ styles/:
 - Ensure Server Components rely on static data from `actions` files for rendering.
 
 # Code Guidelines:
-- Adhere to DRY principles (Don’t Repeat Yourself).
+- Adhere to DRY principles (Don't Repeat Yourself).
 - Use descriptive variable and function names for clarity and maintainability.
 - Implement accessibility features (e.g., aria-labels, tabindex) for compliance with best practices.
 - Use TailwindCSS exclusively for styling; avoid inline or external CSS files unless absolutely necessary.
+
+# ============================================================================
+# NEXT.JS 16 SPECIFIC RULES
+# ============================================================================
+
+# Loading States (CRITICAL - NEVER VIOLATE):
+- NEVER create full-page loading indicators or full-screen spinners
+- NEVER use `loading.tsx` files that show full-page spinners
+- ALWAYS use skeleton loaders for content placeholders:
+  ```tsx
+  // ✅ CORRECT - Component-level skeleton
+  <Suspense fallback={<Skeleton className="h-20 w-full" />}>
+    <UserProfile />
+  </Suspense>
+  
+  // ❌ WRONG - Full-page spinner
+  <Suspense fallback={
+    <div className="flex items-center justify-center min-h-screen">
+      <Spinner />
+    </div>
+  }>
+  ```
+- Use `loading.tsx` files ONLY for route-level loading with skeletons:
+  ```tsx
+  // ✅ CORRECT - Route loading with skeletons
+  export default function Loading() {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-32 w-full" />
+      </div>
+    );
+  }
+  ```
+- Inline loading states should match the content structure they're replacing
+
+# Component Creation Workflow:
+1. START as Server Component (no "use client")
+2. Add interactivity ONLY when needed (then add "use client")
+3. Isolate into smaller components if >200 lines
+4. Extract reusable logic into hooks
+5. Use Suspense with skeletons for async data
+
+# Stateful Components Pattern:
+```tsx
+// ✅ CORRECT - Stateful button component
+"use client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+
+export function StatefulButton() {
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const handleClick = async () => {
+    setIsLoading(true);
+    // ... async operation
+    setIsLoading(false);
+  };
+  
+  return (
+    <Button onClick={handleClick} disabled={isLoading}>
+      {isLoading ? "Loading..." : "Submit"}
+    </Button>
+  );
+}
+
+// ✅ CORRECT - Stateful dialog
+"use client";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+
+export function StatefulDialog() {
+  const [open, setOpen] = useState(false);
+  
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger>Open</DialogTrigger>
+      <DialogContent>
+        {/* Content */}
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+# Server Component Pattern:
+```tsx
+// ✅ CORRECT - Server Component (default)
+import { getData } from "@/actions/getData";
+import { ClientButton } from "@/components/client-button";
+
+export default async function ServerPage() {
+  const data = await getData(); // Server-side data fetching
+  
+  return (
+    <div>
+      <h1>{data.title}</h1>
+      <ClientButton /> {/* Can render Client Components */}
+    </div>
+  );
+}
+```
+
+# Suspense Boundaries:
+- Wrap async Server Components with Suspense
+- Use skeletons that match the content structure
+- Place Suspense at the component level, not page level
+- Example:
+  ```tsx
+  <Suspense fallback={<UserListSkeleton />}>
+    <UserList />
+  </Suspense>
+  ```
+
+# Dynamic Imports:
+- Use `next/dynamic` for heavy client-side libraries
+- Always provide loading fallback with skeletons
+- Example:
+  ```tsx
+  const HeavyComponent = dynamic(
+    () => import("@/components/heavy-component"),
+    {
+      ssr: false,
+      loading: () => <HeavyComponentSkeleton />
+    }
+  );
+  ```
+
+# Performance Optimization:
+- Use `useMemo` for expensive computations
+- Use `useCallback` for event handlers passed to children
+- Use `React.memo` for components that re-render frequently
+- Prefer Server Components for data fetching
+- Use dynamic imports for code splitting
 
 # Testing:
 - Verify that Server Components render correctly using data from `actions` functions.
@@ -90,11 +258,103 @@ styles/:
   - Use the `getCustomers` function from `actions/getCustomers.js` to fetch the data.
   - Pass the data to a Server Component, such as `CustomerList`, for rendering in the `app` directory.
 
-# Notes:
+# ============================================================================
+# PROHIBITED PATTERNS (NEVER USE)
+# ============================================================================
+
+# ❌ FORBIDDEN - Full-page loading indicators:
+```tsx
+// NEVER DO THIS
+export default function Loading() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <Spinner />
+    </div>
+  );
+}
+
+// NEVER DO THIS
+<Suspense fallback={
+  <div className="fixed inset-0 flex items-center justify-center">
+    <LoadingSpinner />
+  </div>
+}>
+```
+
+# ❌ FORBIDDEN - Client Components when Server Components would work:
+```tsx
+// DON'T - Unnecessary client component
+"use client";
+export default function StaticContent({ data }) {
+  return <div>{data}</div>; // No interactivity needed
+}
+
+// DO - Server component
+export default function StaticContent({ data }) {
+  return <div>{data}</div>;
+}
+```
+
+# ❌ FORBIDDEN - Large monolithic components:
+- Components over 200 lines MUST be split
+- Extract sub-components, hooks, and utilities
+- Keep components focused and testable
+
+# ============================================================================
+# REQUIRED PATTERNS (ALWAYS USE)
+# ============================================================================
+
+# ✅ REQUIRED - Skeleton loaders for loading states:
+```tsx
+import { Skeleton } from "@/components/ui/skeleton";
+
+export function UserCardSkeleton() {
+  return (
+    <div className="space-y-2">
+      <Skeleton className="h-12 w-12 rounded-full" />
+      <Skeleton className="h-4 w-[200px]" />
+      <Skeleton className="h-4 w-[150px]" />
+    </div>
+  );
+}
+```
+
+# ✅ REQUIRED - Server Components by default:
+```tsx
+// Default - no "use client"
+import { getUsers } from "@/actions/getUsers";
+
+export default async function UsersPage() {
+  const users = await getUsers();
+  return <UserList users={users} />;
+}
+```
+
+# ✅ REQUIRED - Stateful interactive components:
+```tsx
+"use client";
+import { useState } from "react";
+
+export function InteractiveButton() {
+  const [state, setState] = useState(false);
+  // ... stateful logic
+}
+```
+
+# ============================================================================
+# STYLING REQUIREMENTS
+# ============================================================================
+
+- Everything needs to be in dark mode by default
+- Everything needs to be in Tailwind CSS
+- Ensure light mode support is available (use CSS variables)
+- Use shadcn/ui components which support both themes
+
+# ============================================================================
+# NOTES
+# ============================================================================
+
 - This repository is designed as a server-first, frontend-only CMS to replicate backend-like behavior using simulated data.
 - All components, layouts, and features must align with the philosophy of frontend modularity and mimic Payload 3.0 and WordPress.
-
-
-- everything needs to be in dark mode
-- everything needs to be in tailwind
-- we need to make sure were adding in light mod
+- Always prioritize Server Components, component isolation, and skeleton loaders over full-page loading states.
+- Stateful components (buttons, dialogs, forms) should be Client Components with proper state management.

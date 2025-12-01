@@ -1,7 +1,13 @@
 import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { FileIcon, ImageIcon, VideoIcon, FileTextIcon, FileAudioIcon } from "lucide-react";
+import {
+	FileAudioIcon,
+	FileIcon,
+	FileTextIcon,
+	ImageIcon,
+	VideoIcon,
+} from "lucide-react";
 import { createElement } from "react";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -16,7 +22,7 @@ export function formatBytes(bytes: number, decimals = 2) {
 
 	const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-	return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+	return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
 }
 
 export function getFileTypeIcon(mimeType: string, className = "h-4 w-4") {
@@ -55,7 +61,7 @@ export function generateBreadcrumbs(path: string) {
 		{ name: "Home", path: "/" },
 		...parts.map((part, index) => ({
 			name: part,
-			path: "/" + parts.slice(0, index + 1).join("/"),
+			path: `/${parts.slice(0, index + 1).join("/")}`,
 		})),
 	];
 }

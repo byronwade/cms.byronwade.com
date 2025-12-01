@@ -1,11 +1,24 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { Separator } from "@/components/ui/separator";
-import { FileText, Plus, Filter, Clock, Calendar, Globe, Settings } from "lucide-react";
-import { CommonHeader } from "@/components/ui/common-header";
+import {
+	Calendar,
+	Clock,
+	FileText,
+	Filter,
+	Globe,
+	Plus,
+	Settings,
+} from "lucide-react";
 import { SocialShareToolbar } from "@/components/publish/social-share-toolbar";
+import { Button } from "@/components/ui/button";
+import { CommonHeader } from "@/components/ui/common-header";
+import { Separator } from "@/components/ui/separator";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface PublishHeaderProps {
 	leftSidebarOpen: boolean;
@@ -15,13 +28,24 @@ interface PublishHeaderProps {
 	onAddBoard?: () => void;
 }
 
-export function PublishHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSidebar, onToggleRightSidebar, onAddBoard }: PublishHeaderProps) {
+export function PublishHeader({
+	leftSidebarOpen,
+	rightSidebarOpen,
+	onToggleLeftSidebar,
+	onToggleRightSidebar,
+	onAddBoard,
+}: PublishHeaderProps) {
 	const leftContent = (
-		<div className="flex items-center space-x-1">
+		<div className="flex items-center gap-1">
 			<TooltipProvider>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" onClick={onAddBoard} className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							onClick={onAddBoard}
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Plus className="w-4 h-4 mr-1" />
 							Add Board
 						</Button>
@@ -34,10 +58,14 @@ export function PublishHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftS
 
 	const rightContent = (
 		<TooltipProvider>
-			<div className="flex items-center space-x-1">
+			<div className="flex items-center gap-1">
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Filter className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -46,7 +74,11 @@ export function PublishHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftS
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Clock className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -55,7 +87,11 @@ export function PublishHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftS
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Calendar className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -64,14 +100,18 @@ export function PublishHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftS
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Globe className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
 					<TooltipContent>Publish</TooltipContent>
 				</Tooltip>
 
-				<Separator orientation="vertical" className="h-4 bg-[#2a2a2a]" />
+				<Separator orientation="vertical" className="h-4 bg-border" />
 
 				<SocialShareToolbar
 					onShare={(platforms) => {
@@ -79,11 +119,15 @@ export function PublishHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftS
 					}}
 				/>
 
-				<Separator orientation="vertical" className="h-4 bg-[#2a2a2a]" />
+				<Separator orientation="vertical" className="h-4 bg-border" />
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Settings className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -93,5 +137,16 @@ export function PublishHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftS
 		</TooltipProvider>
 	);
 
-	return <CommonHeader leftSidebarOpen={leftSidebarOpen} rightSidebarOpen={rightSidebarOpen} onToggleLeftSidebar={onToggleLeftSidebar} onToggleRightSidebar={onToggleRightSidebar} icon={<FileText className="w-4 h-4 text-blue-500" />} title="Content Publishing" leftContent={leftContent} rightContent={rightContent} />;
+	return (
+		<CommonHeader
+			leftSidebarOpen={leftSidebarOpen}
+			rightSidebarOpen={rightSidebarOpen}
+			onToggleLeftSidebar={onToggleLeftSidebar}
+			onToggleRightSidebar={onToggleRightSidebar}
+			icon={<FileText className="w-4 h-4 text-primary" />}
+			title="Content Publishing"
+			leftContent={leftContent}
+			rightContent={rightContent}
+		/>
+	);
 }

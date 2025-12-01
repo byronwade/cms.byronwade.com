@@ -1,160 +1,160 @@
 {
-  "content": [
-    {
-      "id": "81534835-1637-4b49-905d-7909746d8091",
-      "type": "heading",
-      "props": {
-        "textColor": "default",
-        "backgroundColor": "default",
-        "textAlignment": "left",
-        "level": 1,
-        "isToggleable": false
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "Getting Started with Our CMS",
-          "styles": {}
-        }
-      ],
-      "children": []
-    },
-    {
-      "id": "077f76dc-c4e0-45ab-9686-3ddae461e458",
-      "type": "paragraph",
-      "props": {
-        "textColor": "default",
-        "backgroundColor": "default",
-        "textAlignment": "left"
-      },
-      "content": [],
-      "children": []
-    },
-    {
-      "id": "5cc553af-ba7e-4c6e-9849-549b81c3a443",
-      "type": "paragraph",
-      "props": {
-        "textColor": "default",
-        "backgroundColor": "default",
-        "textAlignment": "left"
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "Welcome to our powerful content management system. This editor provides a rich set of features to help you create engaging content. Press '/' to open the block menu!",
-          "styles": {}
-        }
-      ],
-      "children": []
-    },
-    {
-      "id": "e94f1c14-5772-48c1-b401-d94cfe295047",
-      "type": "paragraph",
-      "props": {
-        "textColor": "default",
-        "backgroundColor": "default",
-        "textAlignment": "left"
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "xqwkxpcqwkec",
-          "styles": {}
-        }
-      ],
-      "children": []
-    },
-    {
-      "id": "c24d5a97-0a95-4c3c-960c-d1f0f33db7f5",
-      "type": "heading",
-      "props": {
-        "textColor": "default",
-        "backgroundColor": "default",
-        "textAlignment": "left",
-        "level": 1,
-        "isToggleable": false
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "dcdcwec",
-          "styles": {}
-        }
-      ],
-      "children": []
-    },
-    {
-      "id": "86e06702-03e9-4cbb-9d87-98005391bc70",
-      "type": "paragraph",
-      "props": {
-        "textColor": "default",
-        "backgroundColor": "blue",
-        "textAlignment": "left"
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "This is a callout block - Use it to highlight important information",
-          "styles": {}
-        }
-      ],
-      "children": []
-    },
-    {
-      "id": "fb3714d4-c5ff-4393-afd8-44a081f5ba37",
-      "type": "paragraph",
-      "props": {
-        "textColor": "default",
-        "backgroundColor": "green",
-        "textAlignment": "left"
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "This is a call to action block - Use it to prompt user action",
-          "styles": {}
-        }
-      ],
-      "children": []
-    },
-    {
-      "id": "c84d2c98-481b-4d00-8b0a-71fe362997e3",
-      "type": "paragraph",
-      "props": {
-        "textColor": "default",
-        "backgroundColor": "purple",
-        "textAlignment": "left"
-      },
-      "content": [
-        {
-          "type": "text",
-          "text": "This is a testimonial block - Use it to showcase customer feedback",
-          "styles": {}
-        }
-      ],
-      "children": []
-    },
-    {
-      "id": "e0a9e8aa-cc80-4a8f-8dde-074967041ac8",
-      "type": "paragraph",
-      "props": {
-        "textColor": "default",
-        "backgroundColor": "default",
-        "textAlignment": "left"
-      },
-      "content": [],
-      "children": []
-    },
-    {
-      "id": "55848268-aa5c-4bb5-ac2d-e5669ae5d36a",
-      "type": "paragraph",
-      "props": {
-        "textColor": "default",
-        "backgroundColor": "default",
-        "textAlignment": "left"
-      },
-      "content": [],
-      "children": []
-    }
-  ]
+	"content": [
+		{
+			"id": "81534835-1637-4b49-905d-7909746d8091",
+			"type": "heading",
+			"props": {
+				"textColor": "default",
+				"backgroundColor": "default",
+				"textAlignment": "left",
+				"level": 1,
+				"isToggleable": false
+			},
+			"content": [
+				{
+					"type": "text",
+					"text": "Getting Started with Our CMS",
+					"styles": {}
+				}
+			],
+			"children": []
+		},
+		{
+			"id": "077f76dc-c4e0-45ab-9686-3ddae461e458",
+			"type": "paragraph",
+			"props": {
+				"textColor": "default",
+				"backgroundColor": "default",
+				"textAlignment": "left"
+			},
+			"content": [],
+			"children": []
+		},
+		{
+			"id": "5cc553af-ba7e-4c6e-9849-549b81c3a443",
+			"type": "paragraph",
+			"props": {
+				"textColor": "default",
+				"backgroundColor": "default",
+				"textAlignment": "left"
+			},
+			"content": [
+				{
+					"type": "text",
+					"text": "Welcome to our powerful content management system. This editor provides a rich set of features to help you create engaging content. Press '/' to open the block menu!",
+					"styles": {}
+				}
+			],
+			"children": []
+		},
+		{
+			"id": "e94f1c14-5772-48c1-b401-d94cfe295047",
+			"type": "paragraph",
+			"props": {
+				"textColor": "default",
+				"backgroundColor": "default",
+				"textAlignment": "left"
+			},
+			"content": [
+				{
+					"type": "text",
+					"text": "xqwkxpcqwkec",
+					"styles": {}
+				}
+			],
+			"children": []
+		},
+		{
+			"id": "c24d5a97-0a95-4c3c-960c-d1f0f33db7f5",
+			"type": "heading",
+			"props": {
+				"textColor": "default",
+				"backgroundColor": "default",
+				"textAlignment": "left",
+				"level": 1,
+				"isToggleable": false
+			},
+			"content": [
+				{
+					"type": "text",
+					"text": "dcdcwec",
+					"styles": {}
+				}
+			],
+			"children": []
+		},
+		{
+			"id": "86e06702-03e9-4cbb-9d87-98005391bc70",
+			"type": "paragraph",
+			"props": {
+				"textColor": "default",
+				"backgroundColor": "blue",
+				"textAlignment": "left"
+			},
+			"content": [
+				{
+					"type": "text",
+					"text": "This is a callout block - Use it to highlight important information",
+					"styles": {}
+				}
+			],
+			"children": []
+		},
+		{
+			"id": "fb3714d4-c5ff-4393-afd8-44a081f5ba37",
+			"type": "paragraph",
+			"props": {
+				"textColor": "default",
+				"backgroundColor": "green",
+				"textAlignment": "left"
+			},
+			"content": [
+				{
+					"type": "text",
+					"text": "This is a call to action block - Use it to prompt user action",
+					"styles": {}
+				}
+			],
+			"children": []
+		},
+		{
+			"id": "c84d2c98-481b-4d00-8b0a-71fe362997e3",
+			"type": "paragraph",
+			"props": {
+				"textColor": "default",
+				"backgroundColor": "purple",
+				"textAlignment": "left"
+			},
+			"content": [
+				{
+					"type": "text",
+					"text": "This is a testimonial block - Use it to showcase customer feedback",
+					"styles": {}
+				}
+			],
+			"children": []
+		},
+		{
+			"id": "e0a9e8aa-cc80-4a8f-8dde-074967041ac8",
+			"type": "paragraph",
+			"props": {
+				"textColor": "default",
+				"backgroundColor": "default",
+				"textAlignment": "left"
+			},
+			"content": [],
+			"children": []
+		},
+		{
+			"id": "55848268-aa5c-4bb5-ac2d-e5669ae5d36a",
+			"type": "paragraph",
+			"props": {
+				"textColor": "default",
+				"backgroundColor": "default",
+				"textAlignment": "left"
+			},
+			"content": [],
+			"children": []
+		}
+	]
 }

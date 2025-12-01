@@ -1,16 +1,7 @@
 "use client";
 
-import React from "react";
-import { BaseLayout } from "@/components/ui/base-layout";
-import { AnalyticsHeader } from "@/components/analytics/header";
-import { AnalyticsSidebar } from "@/components/analytics/sidebar";
-import { AnalyticsRightSidebar } from "@/components/analytics/right-sidebar";
-import { AnalyticsFooter } from "@/components/analytics/footer";
+import { CMSLayoutWrapper } from "@/components/ui/cms-layout-wrapper";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-	return (
-		<BaseLayout Sidebar={AnalyticsSidebar} RightSidebar={AnalyticsRightSidebar} Header={AnalyticsHeader} Footer={AnalyticsFooter}>
-			{children}
-		</BaseLayout>
-	);
+	return <CMSLayoutWrapper>{children}</CMSLayoutWrapper>;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 
 interface HoverTooltipProps {
 	content: React.ReactNode;
@@ -8,7 +8,11 @@ interface HoverTooltipProps {
 	offset?: { x: number; y: number };
 }
 
-export function HoverTooltip({ content, children, offset = { x: 15, y: 15 } }: HoverTooltipProps) {
+export function HoverTooltip({
+	content,
+	children,
+	offset = { x: 15, y: 15 },
+}: HoverTooltipProps) {
 	const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 	const [showTooltip, setShowTooltip] = useState(false);
 
@@ -49,7 +53,7 @@ export function HoverTooltip({ content, children, offset = { x: 15, y: 15 } }: H
 				y: yPos,
 			});
 		},
-		[offset]
+		[offset],
 	);
 
 	return (
@@ -63,10 +67,17 @@ export function HoverTooltip({ content, children, offset = { x: 15, y: 15 } }: H
 						zIndex: 9999,
 					}}
 				>
-					<div className="bg-[#2a2a2a] text-white text-xs rounded-md px-2.5 py-1.5 max-w-[200px] shadow-lg border border-[#3a3a3a] whitespace-normal">{content}</div>
+					<div className="bg-popover text-popover-foreground text-xs rounded-md px-2.5 py-1.5 max-w-[200px] shadow-lg border border-border whitespace-normal">
+						{content}
+					</div>
 				</div>
 			)}
-			<div onMouseEnter={() => setShowTooltip(true)} onMouseLeave={() => setShowTooltip(false)} onMouseMove={handleMouseMove} className="w-full h-full">
+			<div
+				onMouseEnter={() => setShowTooltip(true)}
+				onMouseLeave={() => setShowTooltip(false)}
+				onMouseMove={handleMouseMove}
+				className="w-full h-full"
+			>
 				{children}
 			</div>
 		</>

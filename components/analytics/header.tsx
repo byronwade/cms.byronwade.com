@@ -1,10 +1,24 @@
 "use client";
 
+import {
+	BarChart,
+	BarChart3,
+	Download,
+	LineChart,
+	PieChart,
+	RefreshCw,
+	Settings,
+	Share2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { Separator } from "@/components/ui/separator";
-import { BarChart3, PieChart, LineChart, Download, Share2, RefreshCw, Settings, BarChart } from "lucide-react";
 import { CommonHeader } from "@/components/ui/common-header";
+import { Separator } from "@/components/ui/separator";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface AnalyticsHeaderProps {
 	leftSidebarOpen: boolean;
@@ -13,13 +27,22 @@ interface AnalyticsHeaderProps {
 	onToggleRightSidebar: () => void;
 }
 
-export function AnalyticsHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSidebar, onToggleRightSidebar }: AnalyticsHeaderProps) {
+export function AnalyticsHeader({
+	leftSidebarOpen,
+	rightSidebarOpen,
+	onToggleLeftSidebar,
+	onToggleRightSidebar,
+}: AnalyticsHeaderProps) {
 	const leftContent = (
-		<div className="flex items-center space-x-1">
+		<div className="flex items-center gap-1">
 			<TooltipProvider>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<LineChart className="w-4 h-4 mr-1" />
 							Line Chart
 						</Button>
@@ -32,10 +55,14 @@ export function AnalyticsHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLef
 
 	const rightContent = (
 		<TooltipProvider>
-			<div className="flex items-center space-x-1">
+			<div className="flex items-center gap-1">
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<BarChart3 className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -44,18 +71,26 @@ export function AnalyticsHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLef
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<PieChart className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
 					<TooltipContent>Pie Chart</TooltipContent>
 				</Tooltip>
 
-				<Separator orientation="vertical" className="h-4 bg-[#2a2a2a]" />
+				<Separator orientation="vertical" className="h-4 bg-border" />
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Download className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -64,18 +99,26 @@ export function AnalyticsHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLef
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Share2 className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
 					<TooltipContent>Share</TooltipContent>
 				</Tooltip>
 
-				<Separator orientation="vertical" className="h-4 bg-[#2a2a2a]" />
+				<Separator orientation="vertical" className="h-4 bg-border" />
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<RefreshCw className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -84,7 +127,11 @@ export function AnalyticsHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLef
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Settings className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -94,5 +141,16 @@ export function AnalyticsHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLef
 		</TooltipProvider>
 	);
 
-	return <CommonHeader leftSidebarOpen={leftSidebarOpen} rightSidebarOpen={rightSidebarOpen} onToggleLeftSidebar={onToggleLeftSidebar} onToggleRightSidebar={onToggleRightSidebar} icon={<BarChart className="w-4 h-4 text-blue-500" />} title="Analytics" leftContent={leftContent} rightContent={rightContent} />;
+	return (
+		<CommonHeader
+			leftSidebarOpen={leftSidebarOpen}
+			rightSidebarOpen={rightSidebarOpen}
+			onToggleLeftSidebar={onToggleLeftSidebar}
+			onToggleRightSidebar={onToggleRightSidebar}
+			icon={<BarChart className="w-4 h-4 text-primary" />}
+			title="Analytics"
+			leftContent={leftContent}
+			rightContent={rightContent}
+		/>
+	);
 }

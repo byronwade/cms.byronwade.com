@@ -1,32 +1,56 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { CommandPalette } from "@/components/command-palette";
 import { TopNav } from "@/components/top-nav";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { CommandPalette } from "@/components/command-palette";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+// Note: Metadata cannot be exported from client components
+// Metadata is handled at the root layout level
+
+export default function RootLayout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
-	useEffect(() => {
-		const down = (e: KeyboardEvent) => {
-			if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-				e.preventDefault();
-				setIsCommandPaletteOpen(true);
-			}
-		};
+	// Memoize keyboard handler
+	const handleKeyboardShortcut = useCallback((e: KeyboardEvent) => {
+		if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+			e.preventDefault();
+			setIsCommandPaletteOpen(true);
+		}
+	}, []);
 
-		document.addEventListener("keydown", down);
-		return () => document.removeEventListener("keydown", down);
+	useEffect(() => {
+		document.addEventListener("keydown", handleKeyboardShortcut);
+		return () =>
+			document.removeEventListener("keydown", handleKeyboardShortcut);
+	}, [handleKeyboardShortcut]);
+
+	const handleCloseCommandPalette = useCallback(() => {
+		setIsCommandPaletteOpen(false);
 	}, []);
 
 	return (
 		<SidebarProvider>
-			<div className="min-h-screen bg-[#0a0a0a] overflow-hidden" style={{ "--sidebar-width": "16rem" } as React.CSSProperties}>
-				<CommandPalette isOpen={isCommandPaletteOpen} onClose={() => setIsCommandPaletteOpen(false)} />
-				<TopNav />
+			<CommandPalette
+				isOpen={isCommandPaletteOpen}
+				onClose={handleCloseCommandPalette}
+			/>
+			<TopNav />
+			<Suspense
+				fallback={
+					<div className="space-y-4 p-6">
+						<Skeleton className="h-10 w-full" />
+						<Skeleton className="h-48 w-full" />
+					</div>
+				}
+			>
 				{children}
-			</div>
+			</Suspense>
 		</SidebarProvider>
 	);
 }

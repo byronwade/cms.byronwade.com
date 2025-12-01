@@ -1,7 +1,7 @@
 "use client";
 
+import { Bell, Database, Settings, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Settings, Shield, Bell, Database } from "lucide-react";
 import { CommonFooter } from "@/components/ui/common-footer";
 
 interface SettingsFooterProps {
@@ -10,7 +10,11 @@ interface SettingsFooterProps {
 	rightSidebarOpen: boolean;
 }
 
-export function SettingsFooter({ className = "", leftSidebarOpen, rightSidebarOpen }: SettingsFooterProps) {
+export function SettingsFooter({
+	className = "",
+	leftSidebarOpen,
+	rightSidebarOpen,
+}: SettingsFooterProps) {
 	const [lastSaved, setLastSaved] = useState<Date | null>(null);
 	const [stats, setStats] = useState({
 		activeUsers: 0,
@@ -46,12 +50,12 @@ export function SettingsFooter({ className = "", leftSidebarOpen, rightSidebarOp
 	const leftContent = (
 		<span className="flex items-center">
 			<Settings className="h-3 w-3 mr-1" />
-			<span className="text-white">Settings</span>
+			<span className="text-foreground">Settings</span>
 		</span>
 	);
 
 	const centerContent = (
-		<div className="flex items-center space-x-4">
+		<div className="flex items-center gap-4">
 			<div className="flex items-center gap-2">
 				<Shield className="h-3 w-3" />
 				<span>Active Users: {stats.activeUsers}</span>

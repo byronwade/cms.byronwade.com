@@ -1,10 +1,15 @@
 "use client";
 
+import { Eye, FileText, Redo, Save, Settings, Undo } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Save, Undo, Redo, Eye, Settings, FileText } from "lucide-react";
-import { CommonFooter } from "@/components/ui/common-footer";
 import { Button } from "@/components/ui/button";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { CommonFooter } from "@/components/ui/common-footer";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ContentFooterProps {
 	className?: string;
@@ -12,7 +17,11 @@ interface ContentFooterProps {
 	rightSidebarOpen: boolean;
 }
 
-export function ContentFooter({ className = "", leftSidebarOpen, rightSidebarOpen }: ContentFooterProps) {
+export function ContentFooter({
+	className = "",
+	leftSidebarOpen,
+	rightSidebarOpen,
+}: ContentFooterProps) {
 	const [lastSaved, setLastSaved] = useState<Date | null>(null);
 	const [wordCount, setWordCount] = useState(0);
 	const [charCount, setCharCount] = useState(0);
@@ -55,12 +64,12 @@ export function ContentFooter({ className = "", leftSidebarOpen, rightSidebarOpe
 	const leftContent = (
 		<span className="flex items-center">
 			<FileText className="h-3 w-3 mr-1" />
-			<span className="text-white">Content Editor</span>
+			<span className="text-foreground">Content Editor</span>
 		</span>
 	);
 
 	const centerContent = (
-		<div className="flex items-center space-x-4">
+		<div className="flex items-center gap-4">
 			<span>Words: {wordCount}</span>
 			<span>Characters: {charCount}</span>
 		</div>
@@ -68,7 +77,7 @@ export function ContentFooter({ className = "", leftSidebarOpen, rightSidebarOpe
 
 	const rightContent = (
 		<TooltipProvider>
-			<div className="flex items-center space-x-2">
+			<div className="flex items-center gap-2">
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<Button variant="ghost" size="icon" className="h-6 w-6">

@@ -14,11 +14,11 @@ type ResponseHeaders = {
 	"X-Frame-Options"?: string;
 };
 
-function resolveUrl(url: string, baseUrl: string): string {
+function _resolveUrl(url: string, baseUrl: string): string {
 	try {
 		return new URL(url, baseUrl).toString();
 	} catch {
-		return url.startsWith("/") ? baseUrl + url : baseUrl + "/" + url;
+		return url.startsWith("/") ? baseUrl + url : `${baseUrl}/${url}`;
 	}
 }
 
@@ -27,7 +27,12 @@ export async function GET(request: Request) {
 	const targetUrl = url.searchParams.get("url");
 
 	if (!targetUrl) {
-		return new NextResponse("Missing url parameter", { status: 400 });
+		return new NextResponse("Missing url parameter", {
+			status: 400,
+			headers: {
+				"Cache-Control": "no-store",
+			},
+		});
 	}
 
 	try {
@@ -35,8 +40,10 @@ export async function GET(request: Request) {
 
 		// Forward cookies and headers
 		const headers = new Headers({
-			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-			Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+			"User-Agent":
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+			Accept:
+				"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
 			"Accept-Language": "en-US,en;q=0.5",
 			Connection: "keep-alive",
 			"Upgrade-Insecure-Requests": "1",
@@ -56,16 +63,165 @@ export async function GET(request: Request) {
 		if (isHtml) {
 			let html = await response.text();
 
-			// Fix base URL and resource paths
+			// Get the current request origin for the proxy base URL
+			const requestOrigin = new URL(request.url).origin;
+			const proxyBase = `${requestOrigin}/api/proxy?url=`;
+			
+			// Rewrite all URLs that point to the target domain to go through proxy
+			// This handles both relative URLs and absolute URLs from the target domain
+			const targetDomainRegex = new RegExp(baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+			
+			// Remove any existing base tags and set a new one pointing to current origin
+			html = html.replace(/<base[^>]*>/gi, '');
+			// Add base tag pointing to current origin so relative URLs resolve correctly
+			html = html.replace(/<head>/i, `<head><base href="${requestOrigin}/">`);
+			
+			// Helper function to rewrite a URL to go through proxy
+			const rewriteUrl = (url: string): string => {
+				if (!url || typeof url !== 'string') return url;
+				// If it's already a proxy URL (check for both encoded and unencoded), don't rewrite again
+				if (url.includes('/api/proxy?url=') || url.includes('%2Fapi%2Fproxy')) return url;
+				// If it's a relative URL, make it absolute first
+				if (url.startsWith('/')) {
+					const fullUrl = baseUrl + url;
+					return `${proxyBase}${encodeURIComponent(fullUrl)}`;
+				}
+				// If it's an absolute URL from the target domain, proxy it
+				if (url.startsWith(baseUrl)) {
+					return `${proxyBase}${encodeURIComponent(url)}`;
+				}
+				// If it's a protocol-relative URL (//example.com), convert to absolute
+				if (url.startsWith('//')) {
+					const fullUrl = new URL(url, baseUrl).toString();
+					if (fullUrl.startsWith(baseUrl)) {
+						return `${proxyBase}${encodeURIComponent(fullUrl)}`;
+					}
+				}
+				// Otherwise, return as-is
+				return url;
+			};
+			
+			// Rewrite relative URLs (starting with /) - handle both double and single quotes
 			html = html
-				.replace(/<head>/, `<head><base href="${baseUrl}/">`)
-				.replace(/href="\//g, `href="${baseUrl}/`)
-				.replace(/src="\//g, `src="${baseUrl}/`)
-				.replace(/action="\//g, `action="${baseUrl}/`);
+				.replace(/href=["'](\/[^"']*)["']/g, (match, path) => `href="${rewriteUrl(path)}"`)
+				.replace(/src=["'](\/[^"']*)["']/g, (match, path) => `src="${rewriteUrl(path)}"`)
+				.replace(/action=["'](\/[^"']*)["']/g, (match, path) => `action="${rewriteUrl(path)}"`)
+				.replace(/url\(["']?(\/[^"')]*)["']?\)/g, (match, path) => `url(${rewriteUrl(path)})`);
+			
+			// Rewrite absolute URLs from the target domain - handle both double and single quotes
+			html = html
+				.replace(/href=["'](https?:\/\/[^"']+)["']/g, (match, url) => {
+					return `href="${rewriteUrl(url)}"`;
+				})
+				.replace(/src=["'](https?:\/\/[^"']+)["']/g, (match, url) => {
+					return `src="${rewriteUrl(url)}"`;
+				})
+				.replace(/action=["'](https?:\/\/[^"']+)["']/g, (match, url) => {
+					return `action="${rewriteUrl(url)}"`;
+				})
+				.replace(/url\(["']?(https?:\/\/[^"')]+)["']?\)/g, (match, url) => {
+					return `url(${rewriteUrl(url)})`;
+				});
+			
+			// Also handle content attribute in meta/link tags and data attributes
+			html = html
+				.replace(/content=["'](https?:\/\/[^"']+)["']/g, (match, url) => {
+					if (url.startsWith(baseUrl)) {
+						return `content="${rewriteUrl(url)}"`;
+					}
+					return match;
+				})
+				.replace(/data-[^=]+=["'](https?:\/\/[^"']+)["']/g, (match, url) => {
+					if (url.startsWith(baseUrl)) {
+						return match.replace(url, rewriteUrl(url));
+					}
+					return match;
+				});
 
 			// Add navigation script
 			const navigationScript = `
 				<script>
+					// Fix any remaining URLs that weren't caught by server-side rewriting
+					(function() {
+						const proxyBase = window.location.origin + '/api/proxy?url=';
+						const targetBase = '${baseUrl}';
+						
+						// Fix URLs in link tags (preload, stylesheet, etc.)
+						document.addEventListener('DOMContentLoaded', function() {
+							const links = document.querySelectorAll('link[href]');
+							links.forEach(link => {
+								const href = link.getAttribute('href');
+								if (href && (href.startsWith('/') || href.startsWith(targetBase))) {
+									if (href.startsWith('/')) {
+										link.setAttribute('href', proxyBase + encodeURIComponent(targetBase + href));
+									} else if (href.startsWith(targetBase) && !href.includes('/api/proxy')) {
+										link.setAttribute('href', proxyBase + encodeURIComponent(href));
+									}
+								}
+							});
+							
+							// Fix URLs in script tags
+							const scripts = document.querySelectorAll('script[src]');
+							scripts.forEach(script => {
+								const src = script.getAttribute('src');
+								if (src && (src.startsWith('/') || src.startsWith(targetBase))) {
+									if (src.startsWith('/')) {
+										script.setAttribute('src', proxyBase + encodeURIComponent(targetBase + src));
+									} else if (src.startsWith(targetBase) && !src.includes('/api/proxy')) {
+										script.setAttribute('src', proxyBase + encodeURIComponent(src));
+									}
+								}
+							});
+						});
+					})();
+					
+					// Intercept fetch requests and route through proxy
+					(function() {
+						const originalFetch = window.fetch;
+						const proxyBase = window.location.origin + '/api/proxy?url=';
+						
+						window.fetch = function(...args) {
+							const url = args[0];
+							if (typeof url === 'string') {
+								try {
+									const urlObj = new URL(url, window.location.href);
+									// Only proxy same-origin or relative URLs
+									if (urlObj.origin === '${baseUrl}' || url.startsWith('/')) {
+										const fullUrl = url.startsWith('/') 
+											? '${baseUrl}' + url 
+											: url;
+										args[0] = proxyBase + encodeURIComponent(fullUrl);
+									}
+								} catch (e) {
+									// If URL parsing fails, try to proxy if it looks like a relative URL
+									if (url.startsWith('/')) {
+										args[0] = proxyBase + encodeURIComponent('${baseUrl}' + url);
+									}
+								}
+							}
+							return originalFetch.apply(this, args);
+						};
+						
+						// Intercept XMLHttpRequest
+						const originalOpen = XMLHttpRequest.prototype.open;
+						XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+							try {
+								const urlObj = new URL(url, window.location.href);
+								if (urlObj.origin === '${baseUrl}' || url.startsWith('/')) {
+									const fullUrl = url.startsWith('/') 
+										? '${baseUrl}' + url 
+										: url;
+									url = proxyBase + encodeURIComponent(fullUrl);
+								}
+							} catch (e) {
+								if (url.startsWith('/')) {
+									url = proxyBase + encodeURIComponent('${baseUrl}' + url);
+								}
+							}
+							return originalOpen.call(this, method, url, ...rest);
+						};
+					})();
+					
 					function initializeNavigation() {
 						document.body.style.pointerEvents = 'auto';
 						
@@ -149,11 +305,12 @@ export async function GET(request: Request) {
 				</script>
 			`;
 
-			html = html.replace("</head>", navigationScript + "</head>");
+			html = html.replace("</head>", `${navigationScript}</head>`);
 
 			const responseHeaders: ResponseHeaders = {
 				"Content-Type": "text/html",
-				"Content-Security-Policy": "default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data: blob:; font-src * data:; frame-ancestors *;",
+				"Content-Security-Policy":
+					"default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data: blob:; font-src * data:; frame-ancestors *;",
 				"Access-Control-Allow-Origin": "*",
 				"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 				"Access-Control-Allow-Headers": "*",
@@ -220,8 +377,10 @@ export async function POST(request: Request) {
 		// Forward the request with the same method and body
 		const formData = await request.formData();
 		const headers = new Headers({
-			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-			Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+			"User-Agent":
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+			Accept:
+				"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
 			"Accept-Language": "en-US,en;q=0.5",
 			Connection: "keep-alive",
 			"Upgrade-Insecure-Requests": "1",
@@ -356,12 +515,13 @@ export async function POST(request: Request) {
 							initializeNavigation();
 						}
 					</script>
-				</head>`
+				</head>`,
 				);
 
 			const responseHeaders: ResponseHeaders = {
 				"Content-Type": "text/html",
-				"Content-Security-Policy": "default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data: blob:; font-src * data:; frame-ancestors 'self';",
+				"Content-Security-Policy":
+					"default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data: blob:; font-src * data:; frame-ancestors 'self';",
 				"Access-Control-Allow-Origin": "*",
 				"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 				"Access-Control-Allow-Headers": "*",

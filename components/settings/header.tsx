@@ -1,10 +1,15 @@
 "use client";
 
+import { Redo2, Save, Settings, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { Separator } from "@/components/ui/separator";
-import { Save, Undo2, Redo2, Settings } from "lucide-react";
 import { CommonHeader } from "@/components/ui/common-header";
+import { Separator } from "@/components/ui/separator";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface SettingsHeaderProps {
 	leftSidebarOpen: boolean;
@@ -13,13 +18,22 @@ interface SettingsHeaderProps {
 	onToggleRightSidebar: () => void;
 }
 
-export function SettingsHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSidebar, onToggleRightSidebar }: SettingsHeaderProps) {
+export function SettingsHeader({
+	leftSidebarOpen,
+	rightSidebarOpen,
+	onToggleLeftSidebar,
+	onToggleRightSidebar,
+}: SettingsHeaderProps) {
 	const leftContent = (
-		<div className="flex items-center space-x-1">
+		<div className="flex items-center gap-1">
 			<TooltipProvider>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Undo2 className="w-4 h-4 mr-1" />
 							Undo
 						</Button>
@@ -32,21 +46,29 @@ export function SettingsHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeft
 
 	const rightContent = (
 		<TooltipProvider>
-			<div className="flex items-center space-x-1">
+			<div className="flex items-center gap-1">
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Redo2 className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
 					<TooltipContent>Redo (Ctrl+Y)</TooltipContent>
 				</Tooltip>
 
-				<Separator orientation="vertical" className="h-4 bg-[#2a2a2a]" />
+				<Separator orientation="vertical" className="h-4 bg-border" />
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Save className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -56,5 +78,16 @@ export function SettingsHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeft
 		</TooltipProvider>
 	);
 
-	return <CommonHeader leftSidebarOpen={leftSidebarOpen} rightSidebarOpen={rightSidebarOpen} onToggleLeftSidebar={onToggleLeftSidebar} onToggleRightSidebar={onToggleRightSidebar} icon={<Settings className="w-4 h-4 text-blue-500" />} title="Settings" leftContent={leftContent} rightContent={rightContent} />;
+	return (
+		<CommonHeader
+			leftSidebarOpen={leftSidebarOpen}
+			rightSidebarOpen={rightSidebarOpen}
+			onToggleLeftSidebar={onToggleLeftSidebar}
+			onToggleRightSidebar={onToggleRightSidebar}
+			icon={<Settings className="w-4 h-4 text-primary" />}
+			title="Settings"
+			leftContent={leftContent}
+			rightContent={rightContent}
+		/>
+	);
 }

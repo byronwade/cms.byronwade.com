@@ -1,7 +1,13 @@
 "use client";
 
+import {
+	FileAudio,
+	FileImage,
+	FileVideo,
+	HardDrive,
+	Image as ImageIcon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
-import { Image as ImageIcon, HardDrive, FileVideo, FileImage, FileAudio } from "lucide-react";
 import { CommonFooter } from "@/components/ui/common-footer";
 
 interface MediaFooterProps {
@@ -10,7 +16,11 @@ interface MediaFooterProps {
 	rightSidebarOpen: boolean;
 }
 
-export function MediaFooter({ className = "", leftSidebarOpen, rightSidebarOpen }: MediaFooterProps) {
+export function MediaFooter({
+	className = "",
+	leftSidebarOpen,
+	rightSidebarOpen,
+}: MediaFooterProps) {
 	const [lastSaved, setLastSaved] = useState<Date | null>(null);
 	const [storageUsed, setStorageUsed] = useState(0);
 	const [mediaStats, setMediaStats] = useState({
@@ -48,12 +58,12 @@ export function MediaFooter({ className = "", leftSidebarOpen, rightSidebarOpen 
 	const leftContent = (
 		<span className="flex items-center">
 			<ImageIcon className="h-3 w-3 mr-1" />
-			<span className="text-white">Media Library</span>
+			<span className="text-foreground">Media Library</span>
 		</span>
 	);
 
 	const centerContent = (
-		<div className="flex items-center space-x-4">
+		<div className="flex items-center gap-4">
 			<div className="flex items-center gap-2">
 				<HardDrive className="h-3 w-3" />
 				<span>Storage: {storageUsed}GB used</span>

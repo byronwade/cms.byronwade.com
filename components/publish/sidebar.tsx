@@ -1,18 +1,38 @@
-import { FileText, Clock, Globe, CalendarClock, Tag, Settings, Filter } from "lucide-react";
-import { CommonSidebar, SidebarSection, SidebarItem } from "@/components/common/sidebar";
+"use client";
+
+import {
+	CalendarClock,
+	Clock,
+	FileText,
+	Filter,
+	Globe,
+	Settings,
+	Tag,
+} from "lucide-react";
+import {
+	CommonSidebar,
+	SidebarItem,
+	SidebarSection,
+} from "@/components/common/sidebar";
 
 interface PublishSidebarProps {
 	isOpen: boolean;
 }
 
-export function PublishSidebar({ isOpen }: PublishSidebarProps) {
+function PublishSidebar({ isOpen }: PublishSidebarProps) {
 	return (
 		<CommonSidebar isOpen={isOpen} side="left">
 			<SidebarSection title="Content">
-				<SidebarItem icon={<FileText className="h-4 w-4" />}>All Content</SidebarItem>
+				<SidebarItem icon={<FileText className="h-4 w-4" />}>
+					All Content
+				</SidebarItem>
 				<SidebarItem icon={<Clock className="h-4 w-4" />}>Drafts</SidebarItem>
-				<SidebarItem icon={<Globe className="h-4 w-4" />}>Published</SidebarItem>
-				<SidebarItem icon={<CalendarClock className="h-4 w-4" />}>Scheduled</SidebarItem>
+				<SidebarItem icon={<Globe className="h-4 w-4" />}>
+					Published
+				</SidebarItem>
+				<SidebarItem icon={<CalendarClock className="h-4 w-4" />}>
+					Scheduled
+				</SidebarItem>
 			</SidebarSection>
 
 			<SidebarSection title="Organize">
@@ -21,9 +41,15 @@ export function PublishSidebar({ isOpen }: PublishSidebarProps) {
 			</SidebarSection>
 
 			<SidebarSection title="Tools">
-				<SidebarItem icon={<Filter className="h-4 w-4" />}>Bulk Actions</SidebarItem>
-				<SidebarItem icon={<Settings className="h-4 w-4" />}>Settings</SidebarItem>
+				<SidebarItem icon={<Filter className="h-4 w-4" />}>
+					Bulk Actions
+				</SidebarItem>
+				<SidebarItem icon={<Settings className="h-4 w-4" />}>
+					Settings
+				</SidebarItem>
 			</SidebarSection>
 		</CommonSidebar>
 	);
 }
+
+export { PublishSidebar };

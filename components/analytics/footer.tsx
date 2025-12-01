@@ -1,7 +1,7 @@
 "use client";
 
+import { Activity, Clock, FileText, Globe } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FileText, Clock, Globe, Activity } from "lucide-react";
 import { CommonFooter } from "@/components/ui/common-footer";
 
 interface AnalyticsFooterProps {
@@ -10,7 +10,11 @@ interface AnalyticsFooterProps {
 	rightSidebarOpen: boolean;
 }
 
-export function AnalyticsFooter({ className = "", leftSidebarOpen, rightSidebarOpen }: AnalyticsFooterProps) {
+export function AnalyticsFooter({
+	className = "",
+	leftSidebarOpen,
+	rightSidebarOpen,
+}: AnalyticsFooterProps) {
 	const [lastSaved, setLastSaved] = useState<Date | null>(null);
 	const [stats, setStats] = useState({
 		pageViews: 0,
@@ -33,7 +37,9 @@ export function AnalyticsFooter({ className = "", leftSidebarOpen, rightSidebarO
 			setStats({
 				pageViews: Math.floor(Math.random() * 10000),
 				activeUsers: Math.floor(Math.random() * 1000),
-				avgSessionTime: `${Math.floor(Math.random() * 10)}:${Math.floor(Math.random() * 60)
+				avgSessionTime: `${Math.floor(Math.random() * 10)}:${Math.floor(
+					Math.random() * 60,
+				)
 					.toString()
 					.padStart(2, "0")}`,
 			});
@@ -48,12 +54,12 @@ export function AnalyticsFooter({ className = "", leftSidebarOpen, rightSidebarO
 	const leftContent = (
 		<span className="flex items-center">
 			<Activity className="h-3 w-3 mr-1" />
-			<span className="text-white">Analytics Dashboard</span>
+			<span className="text-foreground">Analytics Dashboard</span>
 		</span>
 	);
 
 	const centerContent = (
-		<div className="flex items-center space-x-4">
+		<div className="flex items-center gap-4">
 			<div className="flex items-center gap-2">
 				<Globe className="h-3 w-3" />
 				<span>Page Views: {stats.pageViews.toLocaleString()}</span>

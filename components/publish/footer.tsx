@@ -1,7 +1,7 @@
 "use client";
 
+import { Calendar, Clock, FileText, Globe } from "lucide-react";
 import { useEffect, useState } from "react";
-import { FileText, Clock, Calendar, Globe } from "lucide-react";
 import { CommonFooter } from "@/components/ui/common-footer";
 
 interface PublishFooterProps {
@@ -10,7 +10,11 @@ interface PublishFooterProps {
 	rightSidebarOpen: boolean;
 }
 
-export function PublishFooter({ className = "", leftSidebarOpen, rightSidebarOpen }: PublishFooterProps) {
+export function PublishFooter({
+	className = "",
+	leftSidebarOpen,
+	rightSidebarOpen,
+}: PublishFooterProps) {
 	const [lastSaved, setLastSaved] = useState<Date | null>(null);
 	const [scheduledPosts, setScheduledPosts] = useState(0);
 	const [publishedPosts, setPublishedPosts] = useState(0);
@@ -43,12 +47,12 @@ export function PublishFooter({ className = "", leftSidebarOpen, rightSidebarOpe
 	const leftContent = (
 		<span className="flex items-center">
 			<FileText className="h-3 w-3 mr-1" />
-			<span className="text-white">Publishing Dashboard</span>
+			<span className="text-foreground">Publishing Dashboard</span>
 		</span>
 	);
 
 	const centerContent = (
-		<div className="flex items-center space-x-4">
+		<div className="flex items-center gap-4">
 			<div className="flex items-center gap-2">
 				<Clock className="h-3 w-3" />
 				<span>Scheduled: {scheduledPosts}</span>

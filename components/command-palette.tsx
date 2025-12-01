@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
 import { Command } from "cmdk";
 import { Search } from "lucide-react";
+import * as React from "react";
 import { cn } from "@/lib/utils";
 
 interface CommandPaletteProps {
@@ -85,9 +85,19 @@ const commandItems: CommandItem[] = [
 	},
 ];
 
-export function CommandPalette({ className, isOpen, onClose }: CommandPaletteProps) {
+export function CommandPalette({
+	className,
+	isOpen,
+	onClose,
+}: CommandPaletteProps) {
 	const [search, setSearch] = React.useState("");
-	const [pages] = React.useState(["All", "Task", "Document", "Media", "People"]);
+	const [pages] = React.useState([
+		"All",
+		"Task",
+		"Document",
+		"Media",
+		"People",
+	]);
 	const [selectedPage, setSelectedPage] = React.useState("All");
 
 	React.useEffect(() => {
@@ -103,15 +113,37 @@ export function CommandPalette({ className, isOpen, onClose }: CommandPalettePro
 	}, [onClose]);
 
 	return (
-		<Command.Dialog open={isOpen} onOpenChange={onClose} className={cn("fixed top-[20%] left-1/2 -translate-x-1/2 w-[640px] max-w-[90vw] rounded-xl bg-white dark:bg-[#1a1a1a] shadow-2xl", className)}>
-			<div className="flex items-center border-b border-[#2a2a2a] px-3">
-				<Search className="w-4 h-4 text-gray-400 mr-2" />
-				<Command.Input value={search} onValueChange={setSearch} placeholder="Search..." className="flex-1 h-12 bg-transparent outline-none placeholder:text-gray-400 text-white" />
+		<Command.Dialog
+			open={isOpen}
+			onOpenChange={onClose}
+			className={cn(
+				"fixed top-[20%] left-1/2 -translate-x-1/2 w-[640px] max-w-[90vw] rounded-xl bg-popover shadow-2xl",
+				className,
+			)}
+		>
+			<div className="flex items-center border-b border-border px-3">
+				<Search className="w-4 h-4 text-muted-foreground mr-2" />
+				<Command.Input
+					value={search}
+					onValueChange={setSearch}
+					placeholder="Search..."
+					className="flex-1 h-12 bg-transparent outline-none placeholder:text-muted-foreground text-popover-foreground"
+				/>
 			</div>
 
-			<div className="border-b border-[#2a2a2a] px-3 py-2 flex space-x-4">
+			<div className="border-b border-border px-3 py-2 flex gap-4">
 				{pages.map((page) => (
-					<button key={page} onClick={() => setSelectedPage(page)} className={cn("text-sm", selectedPage === page ? "text-white" : "text-gray-400 hover:text-white transition-colors")}>
+					<button
+						type="button"
+						key={page}
+						onClick={() => setSelectedPage(page)}
+						className={cn(
+							"text-sm",
+							selectedPage === page
+								? "text-popover-foreground"
+								: "text-muted-foreground hover:text-popover-foreground transition-colors",
+						)}
+					>
 						{page}
 					</button>
 				))}
@@ -120,9 +152,12 @@ export function CommandPalette({ className, isOpen, onClose }: CommandPalettePro
 			<Command.List className="max-h-[300px] overflow-y-auto p-2">
 				{commandItems.map((group, index) => (
 					<React.Fragment key={group.category}>
-						{index === 0 || group.category !== commandItems[index - 1].category ? (
+						{index === 0 ||
+						group.category !== commandItems[index - 1].category ? (
 							<Command.Group heading={group.category} className="px-2 py-1">
-								<div className="text-xs text-gray-400 uppercase mb-2">{group.category}</div>
+								<div className="text-xs text-muted-foreground uppercase mb-2">
+									{group.category}
+								</div>
 							</Command.Group>
 						) : null}
 						<Command.Item
@@ -131,7 +166,7 @@ export function CommandPalette({ className, isOpen, onClose }: CommandPalettePro
 								console.log(`Selected: ${group.title}`);
 								onClose();
 							}}
-							className="flex items-center justify-between px-2 py-1.5 rounded-md text-sm text-gray-400 hover:bg-[#2a2a2a] hover:text-white cursor-pointer"
+							className="flex items-center justify-between px-2 py-1.5 rounded-md text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer"
 						>
 							<div className="flex items-center gap-2">
 								<span className="text-lg">{group.icon}</span>
@@ -139,7 +174,9 @@ export function CommandPalette({ className, isOpen, onClose }: CommandPalettePro
 							</div>
 							{group.shortcut && (
 								<div className="flex items-center gap-1">
-									<kbd className="px-2 py-1 text-xs bg-[#2a2a2a] rounded text-gray-400">{group.shortcut}</kbd>
+									<kbd className="px-2 py-1 text-xs bg-muted rounded text-muted-foreground">
+										{group.shortcut}
+									</kbd>
 								</div>
 							)}
 						</Command.Item>
@@ -147,8 +184,8 @@ export function CommandPalette({ className, isOpen, onClose }: CommandPalettePro
 				))}
 			</Command.List>
 
-			<div className="border-t border-[#2a2a2a] p-2">
-				<div className="flex items-center justify-between text-xs text-gray-400">
+			<div className="border-t border-border p-2">
+				<div className="flex items-center justify-between text-xs text-muted-foreground">
 					<div className="flex items-center gap-2">
 						<span>↑↓</span>
 						<span>Navigate</span>

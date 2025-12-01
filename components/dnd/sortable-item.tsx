@@ -11,8 +11,20 @@ interface SortableItemProps {
 	className?: string;
 }
 
-export function SortableItem({ id, children, onClick, className }: SortableItemProps) {
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+export function SortableItem({
+	id,
+	children,
+	onClick,
+	className,
+}: SortableItemProps) {
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable({
 		id,
 	});
 
@@ -23,7 +35,15 @@ export function SortableItem({ id, children, onClick, className }: SortableItemP
 	};
 
 	return (
-		<div ref={setNodeRef} style={style} {...attributes} {...listeners} className={cn("touch-none relative", className)} onClick={onClick} data-sortable-item>
+		<div
+			ref={setNodeRef}
+			style={style}
+			{...attributes}
+			{...listeners}
+			className={cn("touch-none relative", className)}
+			onClick={onClick}
+			data-sortable-item
+		>
 			{children}
 		</div>
 	);

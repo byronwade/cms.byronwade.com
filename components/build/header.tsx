@@ -1,10 +1,22 @@
 "use client";
 
+import {
+	Database,
+	Play,
+	Plus,
+	RefreshCw,
+	Settings,
+	Square,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { Separator } from "@/components/ui/separator";
-import { Database, Plus, Play, Square, RefreshCw, Settings } from "lucide-react";
 import { CommonHeader } from "@/components/ui/common-header";
+import { Separator } from "@/components/ui/separator";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface BuildHeaderProps {
 	leftSidebarOpen: boolean;
@@ -14,13 +26,24 @@ interface BuildHeaderProps {
 	onAddTable?: () => void;
 }
 
-export function BuildHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSidebar, onToggleRightSidebar, onAddTable }: BuildHeaderProps) {
+function BuildHeader({
+	leftSidebarOpen,
+	rightSidebarOpen,
+	onToggleLeftSidebar,
+	onToggleRightSidebar,
+	onAddTable,
+}: BuildHeaderProps) {
 	const leftContent = (
-		<div className="flex items-center space-x-1">
+		<div className="flex items-center gap-1">
 			<TooltipProvider>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" onClick={onAddTable} className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							onClick={onAddTable}
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Plus className="w-4 h-4 mr-1" />
 							Add Table
 						</Button>
@@ -33,10 +56,14 @@ export function BuildHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 
 	const rightContent = (
 		<TooltipProvider>
-			<div className="flex items-center space-x-1">
+			<div className="flex items-center gap-1">
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Play className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -45,7 +72,11 @@ export function BuildHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Square className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -54,18 +85,26 @@ export function BuildHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<RefreshCw className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
 					<TooltipContent>Refresh (Ctrl+R)</TooltipContent>
 				</Tooltip>
 
-				<Separator orientation="vertical" className="h-4 bg-[#2a2a2a]" />
+				<Separator orientation="vertical" className="h-4 bg-border" />
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Settings className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -75,5 +114,18 @@ export function BuildHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 		</TooltipProvider>
 	);
 
-	return <CommonHeader leftSidebarOpen={leftSidebarOpen} rightSidebarOpen={rightSidebarOpen} onToggleLeftSidebar={onToggleLeftSidebar} onToggleRightSidebar={onToggleRightSidebar} icon={<Database className="w-4 h-4 text-blue-500" />} title="Database Builder" leftContent={leftContent} rightContent={rightContent} />;
+	return (
+		<CommonHeader
+			leftSidebarOpen={leftSidebarOpen}
+			rightSidebarOpen={rightSidebarOpen}
+			onToggleLeftSidebar={onToggleLeftSidebar}
+			onToggleRightSidebar={onToggleRightSidebar}
+			icon={<Database className="w-4 h-4 text-primary" />}
+			title="Database Builder"
+			leftContent={leftContent}
+			rightContent={rightContent}
+		/>
+	);
 }
+
+export { BuildHeader };

@@ -1,8 +1,8 @@
 "use client";
 
-import { Bot, ArrowRightLeft, Sparkles, Workflow } from "lucide-react";
-import { Handle, NodeProps, Position } from "reactflow";
 import { motion } from "framer-motion";
+import { ArrowRightLeft, Bot, Sparkles, Workflow } from "lucide-react";
+import { Handle, type NodeProps, Position } from "reactflow";
 
 interface AINodeData {
 	type: "transform" | "enrich" | "validate" | "merge";
@@ -47,11 +47,13 @@ export function AINode({ data, isConnectable = true }: NodeProps<AINodeData>) {
 			transition={{ type: "spring", stiffness: 200, damping: 20 }}
 			tabIndex={0}
 		>
-			<div className="p-4 text-white">
+			<div className="p-4 text-foreground">
 				<div className="flex items-center gap-2 pb-2 mb-4 border-b border-purple-500/20">
 					<div className="p-2 rounded-lg bg-purple-500/10">{style.icon}</div>
 					<div>
-						<h4 className="text-lg font-bold leading-tight text-purple-400">{data.type.charAt(0).toUpperCase() + data.type.slice(1)} AI</h4>
+						<h4 className="text-lg font-bold leading-tight text-purple-400">
+							{data.type.charAt(0).toUpperCase() + data.type.slice(1)} AI
+						</h4>
 						<p className="text-xs text-purple-300/50">AI Processing Node</p>
 					</div>
 				</div>

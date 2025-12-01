@@ -1,10 +1,25 @@
 "use client";
 
+import {
+	Download,
+	Eye,
+	Filter,
+	Image as ImageIcon,
+	Redo,
+	Settings,
+	Trash2,
+	Undo,
+	Upload,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { Separator } from "@/components/ui/separator";
-import { Image as ImageIcon, Upload, Download, Filter, Trash2, Settings, Undo, Redo, Eye } from "lucide-react";
 import { CommonHeader } from "@/components/ui/common-header";
+import { Separator } from "@/components/ui/separator";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface MediaHeaderProps {
 	leftSidebarOpen: boolean;
@@ -16,14 +31,27 @@ interface MediaHeaderProps {
 	onDelete?: () => void;
 }
 
-export function MediaHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSidebar, onToggleRightSidebar, onUpload, onDownload, onDelete }: MediaHeaderProps) {
+export function MediaHeader({
+	leftSidebarOpen,
+	rightSidebarOpen,
+	onToggleLeftSidebar,
+	onToggleRightSidebar,
+	onUpload,
+	onDownload,
+	onDelete,
+}: MediaHeaderProps) {
 	const leftContent = (
-		<div className="flex items-center space-x-1">
+		<div className="flex items-center gap-1">
 			<TooltipProvider>
-				<div className="flex items-center space-x-1">
+				<div className="flex items-center gap-1">
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<Button variant="ghost" size="tiny" onClick={onUpload} className="text-gray-400 hover:bg-gray-700 hover:text-white">
+							<Button
+								variant="ghost"
+								size="tiny"
+								onClick={onUpload}
+								className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+							>
 								<Upload className="w-4 h-4 mr-1" />
 								Upload
 							</Button>
@@ -33,7 +61,12 @@ export function MediaHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<Button variant="ghost" size="tiny" onClick={onDownload} className="text-gray-400 hover:bg-gray-700 hover:text-white">
+							<Button
+								variant="ghost"
+								size="tiny"
+								onClick={onDownload}
+								className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+							>
 								<Download className="w-4 h-4" />
 							</Button>
 						</TooltipTrigger>
@@ -42,7 +75,12 @@ export function MediaHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<Button variant="ghost" size="tiny" onClick={onDelete} className="text-gray-400 hover:bg-gray-700 hover:text-white">
+							<Button
+								variant="ghost"
+								size="tiny"
+								onClick={onDelete}
+								className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+							>
 								<Trash2 className="w-4 h-4" />
 							</Button>
 						</TooltipTrigger>
@@ -51,13 +89,17 @@ export function MediaHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 				</div>
 			</TooltipProvider>
 
-			<Separator orientation="vertical" className="h-4 bg-[#2a2a2a]" />
+			<Separator orientation="vertical" className="h-4 bg-border" />
 
 			<TooltipProvider>
-				<div className="flex items-center space-x-1">
+				<div className="flex items-center gap-1">
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+							<Button
+								variant="ghost"
+								size="tiny"
+								className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+							>
 								<Filter className="w-4 h-4" />
 							</Button>
 						</TooltipTrigger>
@@ -70,10 +112,14 @@ export function MediaHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 
 	const rightContent = (
 		<TooltipProvider>
-			<div className="flex items-center space-x-1">
+			<div className="flex items-center gap-1">
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Undo className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -82,7 +128,11 @@ export function MediaHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Redo className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -91,18 +141,26 @@ export function MediaHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Eye className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
 					<TooltipContent>Preview (Ctrl+P)</TooltipContent>
 				</Tooltip>
 
-				<Separator orientation="vertical" className="h-4 bg-[#2a2a2a]" />
+				<Separator orientation="vertical" className="h-4 bg-border" />
 
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Button variant="ghost" size="tiny" className="text-gray-400 hover:bg-gray-700 hover:text-white">
+						<Button
+							variant="ghost"
+							size="tiny"
+							className="text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+						>
 							<Settings className="w-4 h-4" />
 						</Button>
 					</TooltipTrigger>
@@ -112,5 +170,16 @@ export function MediaHeader({ leftSidebarOpen, rightSidebarOpen, onToggleLeftSid
 		</TooltipProvider>
 	);
 
-	return <CommonHeader leftSidebarOpen={leftSidebarOpen} rightSidebarOpen={rightSidebarOpen} onToggleLeftSidebar={onToggleLeftSidebar} onToggleRightSidebar={onToggleRightSidebar} icon={<ImageIcon className="w-4 h-4 text-blue-500" />} title="Media Library" leftContent={leftContent} rightContent={rightContent} />;
+	return (
+		<CommonHeader
+			leftSidebarOpen={leftSidebarOpen}
+			rightSidebarOpen={rightSidebarOpen}
+			onToggleLeftSidebar={onToggleLeftSidebar}
+			onToggleRightSidebar={onToggleRightSidebar}
+			icon={<ImageIcon className="w-4 h-4 text-primary" />}
+			title="Media Library"
+			leftContent={leftContent}
+			rightContent={rightContent}
+		/>
+	);
 }

@@ -1,7 +1,7 @@
 "use client";
 
+import { Box, Paintbrush, Ruler, Type } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Paintbrush, Ruler, Box, Type } from "lucide-react";
 import { CommonFooter } from "@/components/ui/common-footer";
 
 interface DesignFooterProps {
@@ -10,7 +10,11 @@ interface DesignFooterProps {
 	rightSidebarOpen: boolean;
 }
 
-export function DesignFooter({ className = "", leftSidebarOpen, rightSidebarOpen }: DesignFooterProps) {
+export function DesignFooter({
+	className = "",
+	leftSidebarOpen,
+	rightSidebarOpen,
+}: DesignFooterProps) {
 	const [lastSaved, setLastSaved] = useState<Date | null>(null);
 	const [elementCount, setElementCount] = useState(0);
 	const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
@@ -44,12 +48,12 @@ export function DesignFooter({ className = "", leftSidebarOpen, rightSidebarOpen
 	const leftContent = (
 		<span className="flex items-center">
 			<Paintbrush className="h-3 w-3 mr-1" />
-			<span className="text-white">Visual Designer</span>
+			<span className="text-foreground">Visual Designer</span>
 		</span>
 	);
 
 	const centerContent = (
-		<div className="flex items-center space-x-4">
+		<div className="flex items-center gap-4">
 			<div className="flex items-center gap-2">
 				<Box className="h-3 w-3" />
 				<span>Elements: {elementCount}</span>

@@ -1,7 +1,7 @@
 "use client";
 
-import { ReactNode } from "react";
 import { AlertCircle, AlertTriangle, CheckCircle, Info } from "lucide-react";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface CalloutProps {
@@ -38,16 +38,32 @@ const typeConfig = {
 	},
 };
 
-export function CalloutBlock({ type = "info", title, children, className }: CalloutProps) {
+export function CalloutBlock({
+	type = "info",
+	title,
+	children,
+	className,
+}: CalloutProps) {
 	const config = typeConfig[type];
 	const Icon = config.icon;
 
 	return (
-		<div className={cn("p-4 rounded-lg border", config.bgColor, config.borderColor, className)}>
+		<div
+			className={cn(
+				"p-4 rounded-lg border",
+				config.bgColor,
+				config.borderColor,
+				className,
+			)}
+		>
 			<div className="flex items-start space-x-3">
 				<Icon className={cn("w-5 h-5 mt-0.5", config.textColor)} />
 				<div className="flex-1">
-					{title && <h4 className={cn("font-medium mb-1", config.textColor)}>{title}</h4>}
+					{title && (
+						<h4 className={cn("font-medium mb-1", config.textColor)}>
+							{title}
+						</h4>
+					)}
 					<div className="text-gray-200">{children}</div>
 				</div>
 			</div>
@@ -56,7 +72,9 @@ export function CalloutBlock({ type = "info", title, children, className }: Call
 }
 
 // BlockNote integration component
-export function CalloutBlockComponent({ block, editor }: any) {
+// biome-ignore lint/suspicious/noExplicitAny: BlockNote types are complex
+// biome-ignore lint/correctness/noUnusedFunctionParameters: editor may be used in future
+export function CalloutBlockComponent({ block, editor: _editor }: any) {
 	return (
 		<CalloutBlock type={block.props.type} title={block.props.title}>
 			{block.content}

@@ -1,35 +1,42 @@
+import type { Edge, Node, XYPosition } from "reactflow";
 import { create } from "zustand";
-import { Node, XYPosition, Edge } from "reactflow";
-import { TableNodeData } from "./types";
+import type { TableNodeData } from "./types";
 
 interface BuildStore {
-        nodes: Node[];
-        edges: Edge[];
-        selectedNode: Node | null;
-        rightSidebarContent: React.ReactNode | null;
-        isRightSidebarOpen: boolean;
-        setNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
-        setSelectedNode: (node: Node | null) => void;
-        setRightSidebarContent: (content: React.ReactNode | null) => void;
-        openRightSidebar: () => void;
-        closeRightSidebar: () => void;
-        updateNodeData: (nodeId: string, data: Partial<TableNodeData>) => void;
-        updateNodePosition: (nodeId: string, position: XYPosition) => void;
-        addField: (nodeId: string, field: { id: string; label: string; type: string }) => void;
-        updateField: (nodeId: string, fieldId: string, updates: Partial<{ label: string; type: string }>) => void;
-        deleteField: (nodeId: string, fieldId: string) => void;
-        loadNodePositions: () => Record<string, XYPosition>;
-        findAvailablePosition: (nodes: Node[]) => XYPosition;
-        initializePositions: (positions: Record<string, XYPosition>) => void;
-        setEdges: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
+	nodes: Node[];
+	edges: Edge[];
+	selectedNode: Node | null;
+	rightSidebarContent: React.ReactNode | null;
+	isRightSidebarOpen: boolean;
+	setNodes: (nodes: Node[] | ((prev: Node[]) => Node[])) => void;
+	setSelectedNode: (node: Node | null) => void;
+	setRightSidebarContent: (content: React.ReactNode | null) => void;
+	openRightSidebar: () => void;
+	closeRightSidebar: () => void;
+	updateNodeData: (nodeId: string, data: Partial<TableNodeData>) => void;
+	updateNodePosition: (nodeId: string, position: XYPosition) => void;
+	addField: (
+		nodeId: string,
+		field: { id: string; label: string; type: string },
+	) => void;
+	updateField: (
+		nodeId: string,
+		fieldId: string,
+		updates: Partial<{ label: string; type: string }>,
+	) => void;
+	deleteField: (nodeId: string, fieldId: string) => void;
+	loadNodePositions: () => Record<string, XYPosition>;
+	findAvailablePosition: (nodes: Node[]) => XYPosition;
+	initializePositions: (positions: Record<string, XYPosition>) => void;
+	setEdges: (edges: Edge[] | ((prev: Edge[]) => Edge[])) => void;
 }
 
 export const useBuildStore = create<BuildStore>((set) => ({
-        nodes: [] as Node[],
-        edges: [],
-        selectedNode: null,
-        rightSidebarContent: null,
-        isRightSidebarOpen: false,
+	nodes: [] as Node[],
+	edges: [],
+	selectedNode: null,
+	rightSidebarContent: null,
+	isRightSidebarOpen: false,
 
 	setNodes: (nodes) => {
 		if (typeof nodes === "function") {
@@ -49,13 +56,19 @@ export const useBuildStore = create<BuildStore>((set) => ({
 
 	updateNodeData: (nodeId, data) => {
 		set((state) => ({
-			nodes: state.nodes.map((node) => (node.id === nodeId ? { ...node, data: { ...node.data, ...data } } : node)),
+			nodes: state.nodes.map((node) =>
+				node.id === nodeId
+					? { ...node, data: { ...node.data, ...data } }
+					: node,
+			),
 		}));
 	},
 
 	updateNodePosition: (nodeId, position) => {
 		set((state) => ({
-			nodes: state.nodes.map((node) => (node.id === nodeId ? { ...node, position } : node)),
+			nodes: state.nodes.map((node) =>
+				node.id === nodeId ? { ...node, position } : node,
+			),
 		}));
 
 		// Save position to localStorage
@@ -74,8 +87,8 @@ export const useBuildStore = create<BuildStore>((set) => ({
 								...node.data,
 								details: [...(node.data.details || []), field],
 							},
-					  }
-					: node
+						}
+					: node,
 			),
 		}));
 	},
@@ -88,10 +101,12 @@ export const useBuildStore = create<BuildStore>((set) => ({
 							...node,
 							data: {
 								...node.data,
-								details: node.data.details.map((field: { id: string }) => (field.id === fieldId ? { ...field, ...updates } : field)),
+								details: node.data.details.map((field: { id: string }) =>
+									field.id === fieldId ? { ...field, ...updates } : field,
+								),
 							},
-					  }
-					: node
+						}
+					: node,
 			),
 		}));
 	},
@@ -104,10 +119,12 @@ export const useBuildStore = create<BuildStore>((set) => ({
 							...node,
 							data: {
 								...node.data,
-								details: node.data.details.filter((field: { id: string }) => field.id !== fieldId),
+								details: node.data.details.filter(
+									(field: { id: string }) => field.id !== fieldId,
+								),
 							},
-					  }
-					: node
+						}
+					: node,
 			),
 		}));
 	},
@@ -127,7 +144,14 @@ export const useBuildStore = create<BuildStore>((set) => ({
 		let attempts = 0;
 		const maxAttempts = 100;
 
-		while (nodes.some((node) => Math.abs(node.position.x - position.x) < spacing && Math.abs(node.position.y - position.y) < spacing) && attempts < maxAttempts) {
+		while (
+			nodes.some(
+				(node) =>
+					Math.abs(node.position.x - position.x) < spacing &&
+					Math.abs(node.position.y - position.y) < spacing,
+			) &&
+			attempts < maxAttempts
+		) {
 			position.x += spacing;
 			if (position.x > basePosition.x + spacing * 4) {
 				position.x = basePosition.x;

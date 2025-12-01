@@ -5,6 +5,13 @@ interface AnalyticsFooterProps {
 	rightSidebarOpen: boolean;
 }
 
-export function AnalyticsFooter({ leftSidebarOpen, rightSidebarOpen }: AnalyticsFooterProps) {
-	return <footer className="h-[var(--footer-height)] border-t border-[#1f1f1f] bg-[#0a0a0a] flex items-center justify-between px-4">{/* Add footer content here */}</footer>;
+export function AnalyticsFooter({
+	leftSidebarOpen: _leftSidebarOpen,
+	rightSidebarOpen: _rightSidebarOpen,
+}: AnalyticsFooterProps) {
+	return (
+		<footer className="h-[var(--footer-height)] border-t border-[#1f1f1f] bg-[#0a0a0a] flex items-center justify-between px-4">
+			{/* Add footer content here */}
+		</footer>
+	);
 }

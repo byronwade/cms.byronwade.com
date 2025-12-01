@@ -1,8 +1,15 @@
 "use client";
 
+import {
+	Activity,
+	AlertTriangle,
+	CheckCircle2,
+	Database,
+	GitCommit,
+	Workflow,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useBuildStore } from "@/app/cms/build/store";
-import { Database, GitCommit, AlertTriangle, CheckCircle2, Activity, Workflow } from "lucide-react";
 import { CommonFooter } from "@/components/ui/common-footer";
 
 interface Field {
@@ -17,7 +24,11 @@ interface BuildFooterProps {
 	rightSidebarOpen: boolean;
 }
 
-export function BuildFooter({ className = "", leftSidebarOpen, rightSidebarOpen }: BuildFooterProps) {
+export function BuildFooter({
+	className = "",
+	leftSidebarOpen,
+	rightSidebarOpen,
+}: BuildFooterProps) {
 	const { nodes } = useBuildStore();
 	const [lastSaved, setLastSaved] = useState<Date | null>(null);
 	const [timeSpent, setTimeSpent] = useState("00:00:00");
@@ -36,17 +47,44 @@ export function BuildFooter({ className = "", leftSidebarOpen, rightSidebarOpen 
 		if (!Array.isArray(nodes)) return;
 
 		const totalTables = nodes.length;
-		const totalFields = nodes.reduce((acc, node) => acc + (node.data.details?.length || 0), 0);
-		const totalConnections = nodes.reduce((acc, node) => acc + (node.data.details?.filter((field: Field) => field.label.includes("_id")).length || 0), 0);
+		const totalFields = nodes.reduce(
+			(acc, node) => acc + (node.data.details?.length || 0),
+			0,
+		);
+		const totalConnections = nodes.reduce(
+			(acc, node) =>
+				acc +
+				(node.data.details?.filter((field: Field) =>
+					field.label.includes("_id"),
+				).length || 0),
+			0,
+		);
 
 		// Calculate additional metrics
-		const primaryKeys = nodes.reduce((acc, node) => acc + (node.data.details?.filter((field: Field) => field.label === "id").length || 0), 0);
-		const foreignKeys = nodes.reduce((acc, node) => acc + (node.data.details?.filter((field: Field) => field.label.includes("_id")).length || 0), 0);
+		const primaryKeys = nodes.reduce(
+			(acc, node) =>
+				acc +
+				(node.data.details?.filter((field: Field) => field.label === "id")
+					.length || 0),
+			0,
+		);
+		const foreignKeys = nodes.reduce(
+			(acc, node) =>
+				acc +
+				(node.data.details?.filter((field: Field) =>
+					field.label.includes("_id"),
+				).length || 0),
+			0,
+		);
 		const indexedFields = primaryKeys + foreignKeys;
 
 		// Simple validation check (example)
 		const validationIssues = nodes.reduce((acc, node) => {
-			const issues = !node.data.details?.some((field: Field) => field.label === "id") ? 1 : 0;
+			const issues = !node.data.details?.some(
+				(field: Field) => field.label === "id",
+			)
+				? 1
+				: 0;
 			return acc + issues;
 		}, 0);
 
@@ -70,7 +108,9 @@ export function BuildFooter({ className = "", leftSidebarOpen, rightSidebarOpen 
 			const minutes = Math.floor((diff % 3600) / 60);
 			const seconds = diff % 60;
 
-			setTimeSpent(`${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`);
+			setTimeSpent(
+				`${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+			);
 		}, 1000);
 
 		return () => clearInterval(interval);
@@ -88,7 +128,7 @@ export function BuildFooter({ className = "", leftSidebarOpen, rightSidebarOpen 
 	const leftContent = (
 		<span className="flex items-center">
 			<Database className="h-3 w-3 mr-1" />
-			<span className="text-white">Database Schema</span>
+			<span className="text-foreground">Database Schema</span>
 		</span>
 	);
 
@@ -127,12 +167,12 @@ export function BuildFooter({ className = "", leftSidebarOpen, rightSidebarOpen 
 							type: "warning",
 							text: `${stats.validationIssues} Issues`,
 							icon: <AlertTriangle className="h-3 w-3 mr-1" />,
-					  }
+						}
 					: {
 							type: "success",
 							text: "Valid",
 							icon: <CheckCircle2 className="h-3 w-3 mr-1" />,
-					  }
+						}
 			}
 		/>
 	);

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { BarChart, LineChart, PieChart } from "lucide-react";
+import { useEffect, useState } from "react";
+import { NodeEditor } from "@/components/analytics/NodeEditor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, LineChart, PieChart } from "lucide-react";
 import { analyticsStore } from "@/lib/nodes/analytics/store";
-import { NodeEditor } from "@/components/analytics/NodeEditor";
 
 type MetricType = "users" | "revenue" | "conversion";
 interface MetricData {
@@ -75,43 +75,55 @@ export default function AnalyticsPage() {
 	return (
 		<div className="flex-1 overflow-hidden h-[calc(100vh-110px)]">
 			<div className="h-full overflow-auto">
-				<div className="p-6 bg-[#1a1a1a] text-white">
+				<div className="p-6 bg-background text-foreground">
 					<div className="space-y-6">
 						<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-							<Card className="bg-[#2a2a2a] border-[#3a3a3a] hover:border-[#4a4a4a] transition-colors">
+							<Card className="bg-card border-border hover:border-accent transition-colors">
 								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-									<CardTitle className="text-sm font-medium text-white">Total Users</CardTitle>
-									<BarChart className="h-4 w-4 text-gray-400" />
+									<CardTitle className="text-sm font-medium text-card-foreground">
+										Total Users
+									</CardTitle>
+									<BarChart className="h-4 w-4 text-muted-foreground" />
 								</CardHeader>
 								<CardContent>
-									<div className="text-2xl font-bold text-white">{metrics.users.value.toLocaleString()}</div>
-									<p className="text-xs text-gray-400">
+									<div className="text-2xl font-bold text-card-foreground">
+										{metrics.users.value.toLocaleString()}
+									</div>
+									<p className="text-xs text-muted-foreground">
 										{metrics.users.change > 0 ? "+" : ""}
 										{metrics.users.change.toFixed(1)}% from last month
 									</p>
 								</CardContent>
 							</Card>
-							<Card className="bg-[#2a2a2a] border-[#3a3a3a] hover:border-[#4a4a4a] transition-colors">
+							<Card className="bg-card border-border hover:border-accent transition-colors">
 								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-									<CardTitle className="text-sm font-medium text-white">Revenue</CardTitle>
-									<LineChart className="h-4 w-4 text-gray-400" />
+									<CardTitle className="text-sm font-medium text-card-foreground">
+										Revenue
+									</CardTitle>
+									<LineChart className="h-4 w-4 text-muted-foreground" />
 								</CardHeader>
 								<CardContent>
-									<div className="text-2xl font-bold text-white">${metrics.revenue.value.toLocaleString()}</div>
-									<p className="text-xs text-gray-400">
+									<div className="text-2xl font-bold text-card-foreground">
+										${metrics.revenue.value.toLocaleString()}
+									</div>
+									<p className="text-xs text-muted-foreground">
 										{metrics.revenue.change > 0 ? "+" : ""}
 										{metrics.revenue.change.toFixed(1)}% from last month
 									</p>
 								</CardContent>
 							</Card>
-							<Card className="bg-[#2a2a2a] border-[#3a3a3a] hover:border-[#4a4a4a] transition-colors">
+							<Card className="bg-card border-border hover:border-accent transition-colors">
 								<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-									<CardTitle className="text-sm font-medium text-white">Conversion Rate</CardTitle>
-									<PieChart className="h-4 w-4 text-gray-400" />
+									<CardTitle className="text-sm font-medium text-card-foreground">
+										Conversion Rate
+									</CardTitle>
+									<PieChart className="h-4 w-4 text-muted-foreground" />
 								</CardHeader>
 								<CardContent>
-									<div className="text-2xl font-bold text-white">{metrics.conversion.value.toFixed(2)}%</div>
-									<p className="text-xs text-gray-400">
+									<div className="text-2xl font-bold text-card-foreground">
+										{metrics.conversion.value.toFixed(2)}%
+									</div>
+									<p className="text-xs text-muted-foreground">
 										{metrics.conversion.change > 0 ? "+" : ""}
 										{metrics.conversion.change.toFixed(1)}% from last month
 									</p>
@@ -119,58 +131,92 @@ export default function AnalyticsPage() {
 							</Card>
 						</div>
 
-						<Card className="bg-[#2a2a2a] border-[#3a3a3a] hover:border-[#4a4a4a] transition-colors">
+						<Card className="bg-card border-border hover:border-accent transition-colors">
 							<CardHeader>
-								<CardTitle className="text-white">Analytics Overview</CardTitle>
+								<CardTitle className="text-card-foreground">
+									Analytics Overview
+								</CardTitle>
 								<div className="flex space-x-2">
-									<Button variant={activeChart === "users" ? "default" : "outline"} size="sm" onClick={() => setActiveChart("users")} className={activeChart === "users" ? "bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white border-[#4a4a4a]" : "bg-[#2a2a2a] hover:bg-[#3a3a3a] text-gray-400 border-[#3a3a3a]"}>
+									<Button
+										variant={activeChart === "users" ? "default" : "outline"}
+										size="sm"
+										onClick={() => setActiveChart("users")}
+									>
 										Users
 									</Button>
-									<Button variant={activeChart === "revenue" ? "default" : "outline"} size="sm" onClick={() => setActiveChart("revenue")} className={activeChart === "revenue" ? "bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white border-[#4a4a4a]" : "bg-[#2a2a2a] hover:bg-[#3a3a3a] text-gray-400 border-[#3a3a3a]"}>
+									<Button
+										variant={activeChart === "revenue" ? "default" : "outline"}
+										size="sm"
+										onClick={() => setActiveChart("revenue")}
+									>
 										Revenue
 									</Button>
-									<Button variant={activeChart === "conversion" ? "default" : "outline"} size="sm" onClick={() => setActiveChart("conversion")} className={activeChart === "conversion" ? "bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white border-[#4a4a4a]" : "bg-[#2a2a2a] hover:bg-[#3a3a3a] text-gray-400 border-[#3a3a3a]"}>
+									<Button
+										variant={
+											activeChart === "conversion" ? "default" : "outline"
+										}
+										size="sm"
+										onClick={() => setActiveChart("conversion")}
+									>
 										Conversion
 									</Button>
 								</div>
 							</CardHeader>
 							<CardContent>
-								<div className="h-[300px] flex items-center justify-center bg-[#3a3a3a] rounded-md">
+								<div className="h-[300px] flex items-center justify-center bg-muted rounded-md">
 									<NodeEditor className="w-full h-full" />
 								</div>
 							</CardContent>
 						</Card>
 
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-							<Card className="bg-[#2a2a2a] border-[#3a3a3a] hover:border-[#4a4a4a] transition-colors">
+							<Card className="bg-card border-border hover:border-accent transition-colors">
 								<CardHeader>
-									<CardTitle className="text-white">Top Pages</CardTitle>
+									<CardTitle className="text-card-foreground">
+										Top Pages
+									</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<div className="space-y-4">
 										{DEMO_PAGES.map((page) => (
 											<div key={page.name} className="flex items-center">
-												<div className="w-[30%] font-medium text-white">{page.name}</div>
-												<div className="w-[60%] bg-[#3a3a3a] rounded-full h-2">
-													<div className="bg-blue-500 rounded-full h-2" style={{ width: `${page.percentage}%` }} />
+												<div className="w-[30%] font-medium text-card-foreground">
+													{page.name}
 												</div>
-												<div className="w-[10%] text-right text-sm text-gray-400">{page.views.toLocaleString()}</div>
+												<div className="w-[60%] bg-muted rounded-full h-2">
+													<div
+														className="bg-primary rounded-full h-2"
+														style={{ width: `${page.percentage}%` }}
+													/>
+												</div>
+												<div className="w-[10%] text-right text-sm text-muted-foreground">
+													{page.views.toLocaleString()}
+												</div>
 											</div>
 										))}
 									</div>
 								</CardContent>
 							</Card>
-							<Card className="bg-[#2a2a2a] border-[#3a3a3a] hover:border-[#4a4a4a] transition-colors">
+							<Card className="bg-card border-border hover:border-accent transition-colors">
 								<CardHeader>
-									<CardTitle className="text-white">Recent Activity</CardTitle>
+									<CardTitle className="text-card-foreground">
+										Recent Activity
+									</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<div className="space-y-4">
-										{DEMO_ACTIVITIES.map((activity, index) => (
-											<div key={index} className="flex items-center">
-												<div className="w-2 h-2 rounded-full bg-blue-500 mr-2" />
-												<div className="flex-1 text-white">{activity.text}</div>
-												<div className="text-sm text-gray-400">{activity.time} min ago</div>
+										{DEMO_ACTIVITIES.map((activity) => (
+											<div
+												key={`${activity.text}-${activity.time}`}
+												className="flex items-center"
+											>
+												<div className="w-2 h-2 rounded-full bg-primary mr-2" />
+												<div className="flex-1 text-card-foreground">
+													{activity.text}
+												</div>
+												<div className="text-sm text-muted-foreground">
+													{activity.time} min ago
+												</div>
 											</div>
 										))}
 									</div>

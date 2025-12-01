@@ -4,37 +4,66 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
-      --muted: 210 40% 96.1%;
-      --muted-foreground: 215.4 16.3% 46.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
-      --border: 214.3 31.8% 91.4%;
-      --input: 214.3 31.8% 91.4%;
-      --card: 0 0% 100%;
-      --card-foreground: 222.2 47.4% 11.2%;
-      --primary: 222.2 47.4% 11.2%;
-      --primary-foreground: 210 40% 98%;
-      --secondary: 210 40% 96.1%;
-      --secondary-foreground: 222.2 47.4% 11.2%;
-      --accent: 210 40% 96.1%;
-      --accent-foreground: 222.2 47.4% 11.2%;
-      --destructive: 0 100% 50%;
-      --destructive-foreground: 210 40% 98%;
-      --ring: 215 20.2% 65.1%;
+    --background: 0 0% 97%;
+    --foreground: 0 0% 10%;
+      --muted: 0 0% 95%;
+      --muted-foreground: 0 0% 45.1%;
+    --popover: 0 0% 97%;
+    --popover-foreground: 0 0% 10%;
+      --border: 0 0% 88%;
+      --input: 0 0% 88%;
+      --card: 0 0% 97%;
+      --card-foreground: 0 0% 10%;
+      --primary: 0 0% 11%;
+      --primary-foreground: 0 0% 97%;
+      --secondary: 0 0% 95%;
+      --secondary-foreground: 0 0% 11%;
+      --accent: 0 0% 95%;
+      --accent-foreground: 0 0% 11%;
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 0 0% 97%;
+      --ring: 0 0% 10%;
+    /* Color Hierarchy - Text Levels */
+    --text-primary: 0 0% 8%;      /* Highest contrast - main headings, important text */
+    --text-secondary: 0 0% 12%;   /* Body text, regular content */
+    --text-tertiary: 0 0% 35%;    /* Secondary information, labels */
+    --text-quaternary: 0 0% 50%;  /* Muted text, hints, placeholders */
+    --text-disabled: 0 0% 65%;     /* Disabled text */
+    /* Color Hierarchy - Background Levels */
+    --bg-base: 0 0% 97%;          /* Base background */
+    --bg-elevated: 0 0% 99%;       /* Elevated surfaces (cards, modals) */
+    --bg-overlay: 0 0% 94%;        /* Overlay backgrounds */
+    --bg-subtle: 0 0% 96%;        /* Subtle backgrounds (hover states) */
+    --bg-muted: 0 0% 95%;          /* Muted backgrounds */
+    /* Color Hierarchy - Border Levels */
+    --border-subtle: 0 0% 92%;    /* Subtle borders (dividers) */
+    --border-default: 0 0% 88%;    /* Default borders */
+    --border-strong: 0 0% 75%;     /* Strong borders (focus, active) */
+    --border-emphasis: 0 0% 60%;   /* Emphasis borders (important elements) */
     --radius: 0.5rem;
-    --sidebar-width: 300px;
+    --sidebar-width: 240px;
       --header-height: 40px;
       --footer-height: 32px;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Spacing scale - standardized spacing tokens */
+    --spacing-xs: 0.25rem;   /* 4px */
+    --spacing-sm: 0.5rem;    /* 8px */
+    --spacing-md: 1rem;      /* 16px */
+    --spacing-lg: 1.5rem;    /* 24px */
+    --spacing-xl: 2rem;      /* 32px */
+    --spacing-2xl: 3rem;     /* 48px */
+    /* Container padding */
+    --container-padding: 1rem; /* 16px */
+    /* Header/Footer padding */
+    --header-padding-x: 1rem; /* 16px */
+    --footer-padding-x: 1rem; /* 16px */
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 0 0% 11%;
+    --sidebar-primary: 0 0% 11%;
+    --sidebar-primary-foreground: 0 0% 97%;
+    --sidebar-accent: 0 0% 95%;
+    --sidebar-accent-foreground: 0 0% 11%;
+    --sidebar-border: 0 0% 88%;
+    --sidebar-ring: 0 0% 10%;
 /* Z-index hierarchy */
   --z-content: 1;
   --z-base: 10;
@@ -48,6 +77,53 @@
   --z-modal: 90000;
   --z-toast: 100000;
   }
+
+  .dark {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 96%;
+      --muted: 0 0% 15%;
+      --muted-foreground: 0 0% 63.9%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
+      --border: 0 0% 18%;
+      --input: 0 0% 18%;
+      --card: 0 0% 10%;
+      --card-foreground: 0 0% 96%;
+      --primary: 0 0% 96%;
+      --primary-foreground: 0 0% 11%;
+      --secondary: 0 0% 15%;
+      --secondary-foreground: 0 0% 96%;
+      --accent: 0 0% 15%;
+      --accent-foreground: 0 0% 96%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 96%;
+      --ring: 0 0% 80%;
+    /* Color Hierarchy - Text Levels (Dark Mode) */
+    --text-primary: 0 0% 98%;      /* Highest contrast - main headings, important text */
+    --text-secondary: 0 0% 94%;      /* Body text, regular content */
+    --text-tertiary: 0 0% 70%;      /* Secondary information, labels */
+    --text-quaternary: 0 0% 55%;    /* Muted text, hints, placeholders */
+    --text-disabled: 0 0% 45%;      /* Disabled text */
+    /* Color Hierarchy - Background Levels (Dark Mode) */
+    --bg-base: 0 0% 10%;            /* Base background */
+    --bg-elevated: 0 0% 12%;        /* Elevated surfaces (cards, modals) */
+    --bg-overlay: 0 0% 8%;          /* Overlay backgrounds */
+    --bg-subtle: 0 0% 13%;          /* Subtle backgrounds (hover states) */
+    --bg-muted: 0 0% 15%;           /* Muted backgrounds */
+    /* Color Hierarchy - Border Levels (Dark Mode) */
+    --border-subtle: 0 0% 20%;      /* Subtle borders (dividers) */
+    --border-default: 0 0% 18%;     /* Default borders */
+    --border-strong: 0 0% 30%;      /* Strong borders (focus, active) */
+    --border-emphasis: 0 0% 45%;    /* Emphasis borders (important elements) */
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 0 0% 96%;
+    --sidebar-primary-foreground: 0 0% 11%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 0 0% 80%;
+  }
 }
 
 @layer base {
@@ -57,11 +133,68 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Typography Hierarchy */
+  h1, .h1 {
+    @apply text-text-primary font-bold;
+  }
+  h2, .h2 {
+    @apply text-text-primary font-semibold;
+  }
+  h3, .h3 {
+    @apply text-text-secondary font-semibold;
+  }
+  h4, .h4 {
+    @apply text-text-secondary font-medium;
+  }
+  h5, .h5 {
+    @apply text-text-secondary font-medium;
+  }
+  h6, .h6 {
+    @apply text-text-tertiary font-medium;
+  }
+  p, .body {
+    @apply text-text-secondary;
+  }
+  .text-muted, .text-secondary {
+    @apply text-text-tertiary;
+  }
+  .text-hint, .text-placeholder {
+    @apply text-text-quaternary;
+  }
+  .text-disabled {
+    @apply text-text-disabled;
+  }
+  /* Utility classes for hierarchy */
+  .bg-surface-base {
+    background-color: hsl(var(--bg-base));
+  }
+  .bg-surface-elevated {
+    background-color: hsl(var(--bg-elevated));
+  }
+  .bg-surface-overlay {
+    background-color: hsl(var(--bg-overlay));
+  }
+  .bg-surface-subtle {
+    background-color: hsl(var(--bg-subtle));
+  }
+  .bg-surface-muted {
+    background-color: hsl(var(--bg-muted));
+  }
+  .border-subtle {
+    border-color: hsl(var(--border-subtle));
+  }
+  .border-strong {
+    border-color: hsl(var(--border-strong));
+  }
+  .border-emphasis {
+    border-color: hsl(var(--border-emphasis));
+  }
 }
 
 @layer components {
   .DialogOverlay {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(4px);
     position: fixed;
     inset: 0;
     animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -69,9 +202,11 @@
   }
 
   .DialogContent {
-    background-color: white;
-    border-radius: 6px;
-    box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border: 1px solid hsl(var(--border));
+    border-radius: calc(var(--radius) + 2px);
+    box-shadow: hsl(var(--foreground) / 0.1) 0px 10px 38px -10px, hsl(var(--foreground) / 0.05) 0px 10px 20px -15px;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -112,9 +247,9 @@
   z-index: var(--z-overlay) !important;
 }
 
-/* React Flow Dark Theme */
+/* React Flow Theme */
 .react-flow-dark {
-  background-color: #0a0a0a;
+  background-color: hsl(var(--background));
 }
 
 .react-flow-dark .react-flow__node {
@@ -125,16 +260,16 @@
 .react-flow-dark .react-flow__handle {
   width: 8px;
   height: 8px;
-  background-color: #3b82f6;
-  border: 2px solid #1e293b;
+  background-color: hsl(var(--primary));
+  border: 2px solid hsl(var(--border));
 }
 
 .react-flow-dark .react-flow__handle:hover {
-  background-color: #60a5fa;
+  background-color: hsl(var(--primary) / 0.8);
 }
 
 .react-flow-dark .react-flow__edge path {
-  stroke: #3b82f6;
+  stroke: hsl(var(--primary));
   stroke-width: 2;
 }
 
@@ -144,26 +279,26 @@
 }
 
 .react-flow-dark .react-flow__edge-path {
-  stroke: #3b82f6;
+  stroke: hsl(var(--primary));
   stroke-width: 2;
 }
 
 .react-flow-dark .react-flow__edge-text {
-  fill: #3b82f6;
+  fill: hsl(var(--primary));
   font-weight: bold;
 }
 
 .react-flow-dark .react-flow__edge-textbg {
-  fill: #1b1b1b;
+  fill: hsl(var(--card));
 }
 
 .react-flow-dark .react-flow__connection-path {
-  stroke: #3b82f6;
+  stroke: hsl(var(--primary));
   stroke-width: 2;
 }
 
 .react-flow-dark .react-flow__edge-interaction {
-  stroke: #3b82f6;
+  stroke: hsl(var(--primary));
   stroke-width: 2;
 }
 
@@ -178,17 +313,17 @@
 }
 
 .react-flow-dark .react-flow__controls button {
-  background-color: #1a1a1a;
-  border-bottom: 1px solid #2a2a2a;
-  color: #ffffff;
+  background-color: hsl(var(--card));
+  border-bottom: 1px solid hsl(var(--border));
+  color: hsl(var(--card-foreground));
 }
 
 .react-flow-dark .react-flow__controls button:hover {
-  background-color: #2a2a2a;
+  background-color: hsl(var(--accent));
 }
 
 .react-flow-dark .react-flow__minimap {
-  background-color: #1a1a1a;
+  background-color: hsl(var(--card));
 }
 
 .react-flow-dark .react-flow__attribution {
@@ -210,13 +345,13 @@
 
 /* Connection line style */
 .react-flow__connection-path {
-  stroke: #60a5fa;
+  stroke: hsl(var(--primary));
   stroke-width: 2;
 }
 
 /* Selected node style */
 .react-flow__node.selected {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid hsl(var(--primary));
 }
 
 /* Ensure dropdowns and tooltips appear above content */
@@ -244,26 +379,6 @@
   z-index: var(--z-popover) !important;
 }
 
-/* Ensure content area appears at the correct level */
-.content-area {
-  z-index: var(--z-content) !important;
-}
-
-/* Ensure sidebars appear at the correct level */
-.sidebar {
-  z-index: var(--z-sidebar) !important;
-}
-
-/* Ensure header appears at the correct level */
-.header {
-  z-index: var(--z-header) !important;
-}
-
-/* Ensure overlays appear at the correct level */
-.overlay {
-  z-index: var(--z-overlay) !important;
-}
-
 /* Base layer components */
 .content-area {
   z-index: var(--z-content);
@@ -275,6 +390,10 @@
 
 .sidebar {
   z-index: var(--z-sidebar);
+}
+
+.overlay {
+  z-index: var(--z-overlay);
 }
 
 /* Dropdown menus */
@@ -306,14 +425,4 @@
 /* Toast notifications */
 .toast {
   z-index: var(--z-toast) !important;
-}
-
-/* Ensure popper content appears above other elements */
-[data-radix-popper-content-wrapper] {
-  z-index: var(--z-dropdown) !important;
-}
-
-/* Ensure overlays appear at the correct level */
-.fixed.inset-0 {
-  z-index: var(--z-overlay) !important;
 }

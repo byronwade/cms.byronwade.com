@@ -1,5 +1,5 @@
-import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
+import { create } from "zustand";
 
 export interface Comment {
 	id: string;
@@ -31,7 +31,11 @@ export interface AIRecommendation {
 	type: "move" | "schedule" | "optimize" | "workflow";
 	title: string;
 	description: string;
-	actionType: "move_item" | "schedule_publish" | "content_update" | "workflow_suggestion";
+	actionType:
+		| "move_item"
+		| "schedule_publish"
+		| "content_update"
+		| "workflow_suggestion";
 	priority: "high" | "medium" | "low";
 	itemId: string;
 	suggestedAction: {
@@ -58,7 +62,9 @@ export interface AISuggestedItem extends Omit<ContentItem, "id"> {
 
 interface PublishStore {
 	items: ContentItem[];
-	setItems: (items: ContentItem[] | ((prev: ContentItem[]) => ContentItem[])) => void;
+	setItems: (
+		items: ContentItem[] | ((prev: ContentItem[]) => ContentItem[]),
+	) => void;
 	selectedItem: ContentItem | null;
 	setSelectedItem: (item: ContentItem | null) => void;
 	sidebarOpen: boolean;
@@ -89,20 +95,30 @@ export const demoContent: ContentItem[] = [
 		id: "homepage-redesign",
 		title: "Homepage Redesign 2024",
 		type: "page",
-		description: "Complete overhaul of the main landing page with new hero section, testimonials, and product showcases",
+		description:
+			"Complete overhaul of the main landing page with new hero section, testimonials, and product showcases",
 		status: "draft",
 		lastModified: "2 hours ago",
 		assignedTo: "Sarah",
 		comments: [
-			{ id: "1", text: "Need to coordinate with the marketing team on new copy", author: "John" },
-			{ id: "2", text: "Hero section assets are ready for review", author: "Sarah" },
+			{
+				id: "1",
+				text: "Need to coordinate with the marketing team on new copy",
+				author: "John",
+			},
+			{
+				id: "2",
+				text: "Hero section assets are ready for review",
+				author: "Sarah",
+			},
 		],
 	},
 	{
 		id: "seo-meta",
 		title: "SEO Metadata Updates",
 		type: "seo",
-		description: "Implementing new meta descriptions and title tags across all product pages",
+		description:
+			"Implementing new meta descriptions and title tags across all product pages",
 		status: "draft",
 		lastModified: "30 minutes ago",
 		relatedTo: "product-category",
@@ -113,31 +129,48 @@ export const demoContent: ContentItem[] = [
 		id: "winter-campaign",
 		title: "Winter Sale Campaign",
 		type: "campaign",
-		description: "Holiday season promotional campaign including email templates, landing pages, and social media assets",
+		description:
+			"Holiday season promotional campaign including email templates, landing pages, and social media assets",
 		status: "draft",
 		lastModified: "1 day ago",
 		scheduledFor: "2024-01-15",
 		assignedTo: "Emma",
-		comments: [{ id: "3", text: "Creative assets approved by marketing", author: "Emma" }],
+		comments: [
+			{
+				id: "3",
+				text: "Creative assets approved by marketing",
+				author: "Emma",
+			},
+		],
 	},
 	{
 		id: "product-category",
 		title: "Product Category Restructure",
 		type: "navigation",
-		description: "Reorganizing product categories for better user navigation and SEO optimization",
+		description:
+			"Reorganizing product categories for better user navigation and SEO optimization",
 		status: "in-review",
 		lastModified: "3 days ago",
 		assignedTo: "John",
 		comments: [
-			{ id: "4", text: "UX team has approved the new structure", author: "Lisa" },
-			{ id: "5", text: "Need final sign-off from product team", author: "John" },
+			{
+				id: "4",
+				text: "UX team has approved the new structure",
+				author: "Lisa",
+			},
+			{
+				id: "5",
+				text: "Need final sign-off from product team",
+				author: "John",
+			},
 		],
 	},
 	{
 		id: "blog-series",
 		title: "Tech Trends 2024 Series",
 		type: "blog",
-		description: "A 6-part blog series covering emerging technology trends and their impact on e-commerce",
+		description:
+			"A 6-part blog series covering emerging technology trends and their impact on e-commerce",
 		status: "in-review",
 		lastModified: "1 day ago",
 		scheduledFor: "2024-02-01",
@@ -147,44 +180,56 @@ export const demoContent: ContentItem[] = [
 		id: "product-launch",
 		title: "New Product Line Launch",
 		type: "product",
-		description: "Complete product documentation and marketing materials for the spring collection",
+		description:
+			"Complete product documentation and marketing materials for the spring collection",
 		status: "in-review",
 		lastModified: "5 hours ago",
 		relatedTo: "spring-campaign",
 		relationType: "part of",
 		assignedTo: "Mike",
-		comments: [{ id: "6", text: "Product photos are now available", author: "Sarah" }],
+		comments: [
+			{ id: "6", text: "Product photos are now available", author: "Sarah" },
+		],
 	},
 	{
 		id: "black-friday",
 		title: "Black Friday Campaign Launch",
 		type: "campaign",
-		description: "Complete Black Friday promotional campaign including doorbusters, flash sales, and email sequences",
+		description:
+			"Complete Black Friday promotional campaign including doorbusters, flash sales, and email sequences",
 		status: "scheduled",
 		lastModified: "1 day ago",
 		scheduledFor: "2024-11-29",
 		assignedTo: "Emma",
 		comments: [
 			{ id: "11", text: "All promotional banners are ready", author: "Sarah" },
-			{ id: "12", text: "Email sequences approved by marketing", author: "Emma" },
+			{
+				id: "12",
+				text: "Email sequences approved by marketing",
+				author: "Emma",
+			},
 		],
 	},
 	{
 		id: "new-mobile-app",
 		title: "Mobile App Launch Announcement",
 		type: "page",
-		description: "Official announcement and documentation for our new mobile app release",
+		description:
+			"Official announcement and documentation for our new mobile app release",
 		status: "scheduled",
 		lastModified: "3 days ago",
 		scheduledFor: "2024-01-10",
 		assignedTo: "John",
-		comments: [{ id: "13", text: "App Store approval received", author: "Mike" }],
+		comments: [
+			{ id: "13", text: "App Store approval received", author: "Mike" },
+		],
 	},
 	{
 		id: "year-review",
 		title: "2023 Year in Review",
 		type: "blog",
-		description: "Annual review highlighting key achievements, product launches, and community stories",
+		description:
+			"Annual review highlighting key achievements, product launches, and community stories",
 		status: "scheduled",
 		lastModified: "2 days ago",
 		scheduledFor: "2023-12-28",
@@ -200,7 +245,8 @@ export const demoContent: ContentItem[] = [
 		id: "spring-campaign",
 		title: "Spring Collection Campaign",
 		type: "campaign",
-		description: "Main marketing campaign for the new spring product line including social media strategy",
+		description:
+			"Main marketing campaign for the new spring product line including social media strategy",
 		status: "ready",
 		lastModified: "2 days ago",
 		scheduledFor: "2024-03-01",
@@ -210,7 +256,8 @@ export const demoContent: ContentItem[] = [
 		id: "api-docs",
 		title: "API Documentation Update",
 		type: "page",
-		description: "Comprehensive update to developer documentation including new endpoints and examples",
+		description:
+			"Comprehensive update to developer documentation including new endpoints and examples",
 		status: "ready",
 		lastModified: "4 days ago",
 		assignedTo: "John",
@@ -223,7 +270,8 @@ export const demoContent: ContentItem[] = [
 		id: "checkout-seo",
 		title: "Checkout Flow SEO",
 		type: "seo",
-		description: "Optimization of checkout process pages for better search engine visibility",
+		description:
+			"Optimization of checkout process pages for better search engine visibility",
 		status: "ready",
 		lastModified: "1 week ago",
 		relatedTo: "checkout-redesign",
@@ -234,28 +282,43 @@ export const demoContent: ContentItem[] = [
 		id: "checkout-redesign",
 		title: "Checkout Experience Redesign",
 		type: "page",
-		description: "Streamlined checkout process with improved mobile responsiveness and payment integration",
+		description:
+			"Streamlined checkout process with improved mobile responsiveness and payment integration",
 		status: "published",
 		lastModified: "1 week ago",
 		assignedTo: "Sarah",
-		comments: [{ id: "9", text: "A/B testing shows 15% improvement in conversion", author: "Emma" }],
+		comments: [
+			{
+				id: "9",
+				text: "A/B testing shows 15% improvement in conversion",
+				author: "Emma",
+			},
+		],
 	},
 	{
 		id: "holiday-guide",
 		title: "Holiday Shopping Guide",
 		type: "blog",
-		description: "Curated gift guide featuring top products and exclusive holiday deals",
+		description:
+			"Curated gift guide featuring top products and exclusive holiday deals",
 		status: "published",
 		lastModified: "2 days ago",
 		scheduledFor: "2023-12-01",
 		assignedTo: "Lisa",
-		comments: [{ id: "10", text: "Social media team has started promotion", author: "Emma" }],
+		comments: [
+			{
+				id: "10",
+				text: "Social media team has started promotion",
+				author: "Emma",
+			},
+		],
 	},
 	{
 		id: "nav-update",
 		title: "Navigation Menu Update",
 		type: "navigation",
-		description: "Implementation of new mega menu with improved category organization",
+		description:
+			"Implementation of new mega menu with improved category organization",
 		status: "published",
 		lastModified: "3 days ago",
 		relatedTo: "product-category",
@@ -265,12 +328,13 @@ export const demoContent: ContentItem[] = [
 ];
 
 // Example AI recommendations
-const demoRecommendations: AIRecommendation[] = [
+const _demoRecommendations: AIRecommendation[] = [
 	{
 		id: "r1",
 		type: "move",
 		title: "Ready for Review",
-		description: "This content has met the basic requirements and appears ready for review.",
+		description:
+			"This content has met the basic requirements and appears ready for review.",
 		actionType: "move_item",
 		priority: "high",
 		itemId: "1",
@@ -285,7 +349,8 @@ const demoRecommendations: AIRecommendation[] = [
 		id: "r2",
 		type: "schedule",
 		title: "Optimal Publishing Time",
-		description: "Based on your audience analytics, schedule this post for maximum engagement.",
+		description:
+			"Based on your audience analytics, schedule this post for maximum engagement.",
 		actionType: "schedule_publish",
 		priority: "medium",
 		itemId: "4",
@@ -299,7 +364,8 @@ const demoRecommendations: AIRecommendation[] = [
 		id: "r3",
 		type: "workflow",
 		title: "Content Dependencies",
-		description: "Related content items should be published together for consistency.",
+		description:
+			"Related content items should be published together for consistency.",
 		actionType: "workflow_suggestion",
 		priority: "medium",
 		itemId: "2",
@@ -311,19 +377,24 @@ const demoRecommendations: AIRecommendation[] = [
 ];
 
 // Example AI suggested items
-const generateSuggestedItems = (columnId: string, usedSuggestions: Set<string>): AISuggestedItem[] => {
+const generateSuggestedItems = (
+	columnId: string,
+	usedSuggestions: Set<string>,
+): AISuggestedItem[] => {
 	const allSuggestions = {
 		draft: [
 			{
 				title: "Product Review: Latest iPhone",
-				description: "Comprehensive review of the newest iPhone features and comparisons",
+				description:
+					"Comprehensive review of the newest iPhone features and comparisons",
 				type: "blog",
 				reason: "Based on trending topics and user engagement patterns",
 				confidence: 85,
 			},
 			{
 				title: "Holiday Gift Guide",
-				description: "Curated selection of top tech gifts for the holiday season",
+				description:
+					"Curated selection of top tech gifts for the holiday season",
 				type: "campaign",
 				reason: "Seasonal content opportunity with high conversion potential",
 				confidence: 92,
@@ -355,7 +426,9 @@ const generateSuggestedItems = (columnId: string, usedSuggestions: Set<string>):
 	};
 
 	// Filter out used suggestions and create new ones
-	const suggestions = (allSuggestions[columnId as keyof typeof allSuggestions] || [])
+	const suggestions = (
+		allSuggestions[columnId as keyof typeof allSuggestions] || []
+	)
 		.filter((suggestion) => !usedSuggestions.has(suggestion.title))
 		.map((suggestion) => ({
 			...suggestion,
@@ -426,7 +499,7 @@ export const usePublishStore = create<PublishStore>((set, get) => ({
 	usedSuggestions: new Set<string>(),
 	aiSuggestedItems: {},
 	generateSuggestionsForColumn: (columnId: string) => {
-		const state = get();
+		const _state = get();
 		set((state) => ({
 			aiSuggestedItems: {
 				...state.aiSuggestedItems,
@@ -436,7 +509,9 @@ export const usePublishStore = create<PublishStore>((set, get) => ({
 	},
 	convertSuggestionToItem: (suggestionId: string) => {
 		const state = get();
-		const foundSuggestion = Object.entries(state.aiSuggestedItems).reduce<[string, AISuggestedItem] | null>((acc, [colId, items]) => {
+		const foundSuggestion = Object.entries(state.aiSuggestedItems).reduce<
+			[string, AISuggestedItem] | null
+		>((acc, [colId, items]) => {
 			const found = items.find((item) => item.id === suggestionId);
 			return found ? [colId, found] : acc;
 		}, null);
@@ -464,22 +539,28 @@ export const usePublishStore = create<PublishStore>((set, get) => ({
 			items: [...state.items, newItem],
 			aiSuggestedItems: {
 				...state.aiSuggestedItems,
-				[targetColumnId]: state.aiSuggestedItems[targetColumnId]?.filter((item) => item.id !== suggestionId) || [],
+				[targetColumnId]:
+					state.aiSuggestedItems[targetColumnId]?.filter(
+						(item) => item.id !== suggestionId,
+					) || [],
 			},
 		}));
 
 		// Regenerate suggestions for all columns after a short delay
 		setTimeout(() => {
 			const currentState = get();
-			const updatedSuggestions = Object.keys(currentState.aiSuggestedItems).reduce(
+			const updatedSuggestions = Object.keys(
+				currentState.aiSuggestedItems,
+			).reduce(
+				// biome-ignore lint/performance/noAccumulatingSpread: Need to build object from keys
 				(acc, colId) => ({
 					...acc,
 					[colId]: generateSuggestedItems(colId, currentState.usedSuggestions),
 				}),
-				{}
+				{},
 			);
 
-			set((state) => ({
+			set((_state) => ({
 				aiSuggestedItems: updatedSuggestions,
 			}));
 		}, 100);

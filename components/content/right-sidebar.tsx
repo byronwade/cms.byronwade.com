@@ -1,10 +1,12 @@
-import React from "react";
+"use client";
+
+import { CommonSidebar } from "@/components/common/sidebar";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 interface MetadataType {
 	title: string;
@@ -19,29 +21,46 @@ interface MetadataType {
 interface ContentRightSidebarProps {
 	isOpen: boolean;
 	metadata?: MetadataType;
-	onUpdateMetadata?: (key: keyof MetadataType, value: MetadataType[keyof MetadataType]) => void;
+	onUpdateMetadata?: (
+		key: keyof MetadataType,
+		value: MetadataType[keyof MetadataType],
+	) => void;
 }
 
-export function ContentRightSidebar({ isOpen, metadata, onUpdateMetadata }: ContentRightSidebarProps) {
-	if (!isOpen) return null;
-
+function ContentRightSidebar({
+	isOpen,
+	metadata,
+	onUpdateMetadata,
+}: ContentRightSidebarProps) {
 	return (
-		<div className="w-[var(--sidebar-width)] h-full border-l border-[#1a1a1a] bg-[#0a0a0a] overflow-y-auto">
-			<div className="p-4">
+		<CommonSidebar isOpen={isOpen} side="right">
+			<div>
 				<h2 className="text-lg font-semibold mb-4">Content Settings</h2>
 
 				{metadata && onUpdateMetadata ? (
-					<div className="space-y-6">
+					<div className="gap-6 flex flex-col">
 						{/* Title */}
 						<div>
 							<Label htmlFor="title">Title</Label>
-							<Input id="title" value={metadata.title} onChange={(e) => onUpdateMetadata("title", e.target.value)} className="mt-1" />
+							<Input
+								id="title"
+								value={metadata.title}
+								onChange={(e) => onUpdateMetadata("title", e.target.value)}
+								className="mt-1"
+							/>
 						</div>
 
 						{/* Description */}
 						<div>
 							<Label htmlFor="description">Description</Label>
-							<Textarea id="description" value={metadata.description} onChange={(e) => onUpdateMetadata("description", e.target.value)} className="mt-1" />
+							<Textarea
+								id="description"
+								value={metadata.description}
+								onChange={(e) =>
+									onUpdateMetadata("description", e.target.value)
+								}
+								className="mt-1"
+							/>
 						</div>
 
 						{/* Keywords */}
@@ -53,7 +72,7 @@ export function ContentRightSidebar({ isOpen, metadata, onUpdateMetadata }: Cont
 								onChange={(e) =>
 									onUpdateMetadata(
 										"keywords",
-										e.target.value.split(",").map((k) => k.trim())
+										e.target.value.split(",").map((k) => k.trim()),
 									)
 								}
 								className="mt-1"
@@ -64,15 +83,25 @@ export function ContentRightSidebar({ isOpen, metadata, onUpdateMetadata }: Cont
 						{/* Author */}
 						<div>
 							<Label htmlFor="author">Author</Label>
-							<Input id="author" value={metadata.author} onChange={(e) => onUpdateMetadata("author", e.target.value)} className="mt-1" />
+							<Input
+								id="author"
+								value={metadata.author}
+								onChange={(e) => onUpdateMetadata("author", e.target.value)}
+								className="mt-1"
+							/>
 						</div>
 
 						{/* Status */}
 						<div>
 							<Label>Status</Label>
 							<div className="flex items-center justify-between mt-1">
-								<span className="text-sm text-gray-400">Published</span>
-								<Switch checked={metadata.status === "published"} onCheckedChange={(checked) => onUpdateMetadata("status", checked ? "published" : "draft")} />
+								<span className="text-sm text-muted-foreground">Published</span>
+								<Switch
+									checked={metadata.status === "published"}
+									onCheckedChange={(checked) =>
+										onUpdateMetadata("status", checked ? "published" : "draft")
+									}
+								/>
 							</div>
 						</div>
 
@@ -81,10 +110,14 @@ export function ContentRightSidebar({ isOpen, metadata, onUpdateMetadata }: Cont
 					</div>
 				) : (
 					<Card className="p-4">
-						<p className="text-sm text-gray-400">Select content to view and edit settings</p>
+						<p className="text-sm text-muted-foreground">
+							Select content to view and edit settings
+						</p>
 					</Card>
 				)}
 			</div>
-		</div>
+		</CommonSidebar>
 	);
 }
+
+export { ContentRightSidebar };
