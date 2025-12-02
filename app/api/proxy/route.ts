@@ -66,23 +66,27 @@ export async function GET(request: Request) {
 			// Get the current request origin for the proxy base URL
 			const requestOrigin = new URL(request.url).origin;
 			const proxyBase = `${requestOrigin}/api/proxy?url=`;
-			
+
 			// Rewrite all URLs that point to the target domain to go through proxy
 			// This handles both relative URLs and absolute URLs from the target domain
-			const targetDomainRegex = new RegExp(baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-			
+			const _targetDomainRegex = new RegExp(
+				baseUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+				"g",
+			);
+
 			// Remove any existing base tags and set a new one pointing to current origin
-			html = html.replace(/<base[^>]*>/gi, '');
+			html = html.replace(/<base[^>]*>/gi, "");
 			// Add base tag pointing to current origin so relative URLs resolve correctly
 			html = html.replace(/<head>/i, `<head><base href="${requestOrigin}/">`);
-			
+
 			// Helper function to rewrite a URL to go through proxy
 			const rewriteUrl = (url: string): string => {
-				if (!url || typeof url !== 'string') return url;
+				if (!url || typeof url !== "string") return url;
 				// If it's already a proxy URL (check for both encoded and unencoded), don't rewrite again
-				if (url.includes('/api/proxy?url=') || url.includes('%2Fapi%2Fproxy')) return url;
+				if (url.includes("/api/proxy?url=") || url.includes("%2Fapi%2Fproxy"))
+					return url;
 				// If it's a relative URL, make it absolute first
-				if (url.startsWith('/')) {
+				if (url.startsWith("/")) {
 					const fullUrl = baseUrl + url;
 					return `${proxyBase}${encodeURIComponent(fullUrl)}`;
 				}
@@ -91,7 +95,7 @@ export async function GET(request: Request) {
 					return `${proxyBase}${encodeURIComponent(url)}`;
 				}
 				// If it's a protocol-relative URL (//example.com), convert to absolute
-				if (url.startsWith('//')) {
+				if (url.startsWith("//")) {
 					const fullUrl = new URL(url, baseUrl).toString();
 					if (fullUrl.startsWith(baseUrl)) {
 						return `${proxyBase}${encodeURIComponent(fullUrl)}`;
@@ -100,29 +104,41 @@ export async function GET(request: Request) {
 				// Otherwise, return as-is
 				return url;
 			};
-			
+
 			// Rewrite relative URLs (starting with /) - handle both double and single quotes
 			html = html
-				.replace(/href=["'](\/[^"']*)["']/g, (match, path) => `href="${rewriteUrl(path)}"`)
-				.replace(/src=["'](\/[^"']*)["']/g, (match, path) => `src="${rewriteUrl(path)}"`)
-				.replace(/action=["'](\/[^"']*)["']/g, (match, path) => `action="${rewriteUrl(path)}"`)
-				.replace(/url\(["']?(\/[^"')]*)["']?\)/g, (match, path) => `url(${rewriteUrl(path)})`);
-			
+				.replace(
+					/href=["'](\/[^"']*)["']/g,
+					(_match, path) => `href="${rewriteUrl(path)}"`,
+				)
+				.replace(
+					/src=["'](\/[^"']*)["']/g,
+					(_match, path) => `src="${rewriteUrl(path)}"`,
+				)
+				.replace(
+					/action=["'](\/[^"']*)["']/g,
+					(_match, path) => `action="${rewriteUrl(path)}"`,
+				)
+				.replace(
+					/url\(["']?(\/[^"')]*)["']?\)/g,
+					(_match, path) => `url(${rewriteUrl(path)})`,
+				);
+
 			// Rewrite absolute URLs from the target domain - handle both double and single quotes
 			html = html
-				.replace(/href=["'](https?:\/\/[^"']+)["']/g, (match, url) => {
+				.replace(/href=["'](https?:\/\/[^"']+)["']/g, (_match, url) => {
 					return `href="${rewriteUrl(url)}"`;
 				})
-				.replace(/src=["'](https?:\/\/[^"']+)["']/g, (match, url) => {
+				.replace(/src=["'](https?:\/\/[^"']+)["']/g, (_match, url) => {
 					return `src="${rewriteUrl(url)}"`;
 				})
-				.replace(/action=["'](https?:\/\/[^"']+)["']/g, (match, url) => {
+				.replace(/action=["'](https?:\/\/[^"']+)["']/g, (_match, url) => {
 					return `action="${rewriteUrl(url)}"`;
 				})
-				.replace(/url\(["']?(https?:\/\/[^"')]+)["']?\)/g, (match, url) => {
+				.replace(/url\(["']?(https?:\/\/[^"')]+)["']?\)/g, (_match, url) => {
 					return `url(${rewriteUrl(url)})`;
 				});
-			
+
 			// Also handle content attribute in meta/link tags and data attributes
 			html = html
 				.replace(/content=["'](https?:\/\/[^"']+)["']/g, (match, url) => {

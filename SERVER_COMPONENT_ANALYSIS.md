@@ -87,3 +87,4 @@ This document analyzes which components and pages can be converted from Client C
 
 The codebase is already following Next.js 16 best practices correctly!
 
+

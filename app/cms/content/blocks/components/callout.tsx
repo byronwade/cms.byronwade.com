@@ -73,7 +73,6 @@ export function CalloutBlock({
 
 // BlockNote integration component
 // biome-ignore lint/suspicious/noExplicitAny: BlockNote types are complex
-// biome-ignore lint/correctness/noUnusedFunctionParameters: editor may be used in future
 export function CalloutBlockComponent({ block, editor: _editor }: any) {
 	return (
 		<CalloutBlock type={block.props.type} title={block.props.title}>

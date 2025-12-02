@@ -231,7 +231,9 @@ export function TopNav() {
 								<>
 									<div className={dropdownItemStyles}>
 										<div className="flex flex-col gap-1">
-											<p className="text-sm font-medium text-text-secondary">John Doe</p>
+											<p className="text-sm font-medium text-text-secondary">
+												John Doe
+											</p>
 											<p className="text-xs text-muted-foreground">
 												john@example.com
 											</p>
@@ -300,10 +302,15 @@ export function TopNav() {
 									</span>
 								</Button>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end" className="w-64 z-[var(--z-dropdown)]">
+							<DropdownMenuContent
+								align="end"
+								className="w-64 z-[var(--z-dropdown)]"
+							>
 								<DropdownMenuLabel className="font-normal">
 									<div className="flex flex-col gap-1">
-										<p className="text-sm font-medium text-text-secondary">Notifications</p>
+										<p className="text-sm font-medium text-text-secondary">
+											Notifications
+										</p>
 										<p className="text-xs text-muted-foreground">
 											You have 3 unread messages
 										</p>

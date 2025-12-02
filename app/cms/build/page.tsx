@@ -1,7 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+	Suspense,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import type {
 	Connection,
 	Edge,
@@ -1278,7 +1285,7 @@ const initialEdges: Edge[] = [
 ];
 
 // Node types definition
-const nodeTypes: NodeTypes = {
+const _nodeTypes: NodeTypes = {
 	tableNode: TableNode,
 	aiNode: AINode,
 };
@@ -1385,8 +1392,7 @@ function FieldItem({
 
 // SidebarContent Component
 function SidebarContent({ node }: { node: Node<TableNodeData> }) {
-	const { updateNodeData, addField, updateField, deleteField } =
-		useBuildStore();
+	const { updateNodeData, addField, deleteField } = useBuildStore();
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor),

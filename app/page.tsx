@@ -1,486 +1,201 @@
-// Import all icons normally - Next.js tree-shaking will handle unused imports
-// Grouping by usage frequency for better readability
-import {
-	BanknoteIcon,
-	BarChart,
-	Blocks,
-	Bot,
-	Boxes,
-	Brush,
-	Clock,
-	Cloud,
-	Code2,
-	Cpu,
-	Database,
-	Download,
-	FileJson,
-	Gauge,
-	Github,
-	Globe,
-	Heart,
-	ImageIcon,
-	Keyboard,
-	Languages,
-	Laptop,
-	Layers,
-	Layout,
-	Lock,
-	Puzzle,
-	Rocket,
-	Search,
-	Server,
-	Settings,
-	Shield,
-	Users,
-	Wifi,
-	Workflow,
-	Zap,
-} from "lucide-react";
+import { Code2, Github, Layout, Palette, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-	title: "MyCMS - Modern Alternative to WordPress",
+	title: "CMS Playground - A Visual Experiment",
 	description:
-		"The modern alternative to WordPress. Build faster, scale better, and maintain easier with our next-generation CMS built on Next.js.",
-	keywords: [
-		"CMS",
-		"Content Management System",
-		"WordPress alternative",
-		"Next.js",
-		"Headless CMS",
-	],
+		"A fun project exploring visual concepts and design ideas for CMS systems. Built with Next.js to test vibe coding skills.",
 	openGraph: {
-		title: "MyCMS - Modern Alternative to WordPress",
+		title: "CMS Playground - A Visual Experiment",
 		description:
-			"The modern alternative to WordPress. Build faster, scale better, and maintain easier.",
+			"A fun project exploring visual concepts and design ideas for CMS systems.",
 		type: "website",
 	},
 };
 
 export default function Home() {
 	return (
-		<>
-			<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-				<div className="container flex h-14 items-center">
-					<Link href="/" className="mr-6 flex items-center space-x-2">
-						<Layout className="h-6 w-6" />
-						<span className="font-bold sm:inline-block">MyCMS</span>
-					</Link>
-					<nav className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-						<div className="flex items-center space-x-6">
+		<main className="min-h-screen bg-background">
+			<div className="relative flex justify-center py-16 px-4 sm:py-20 md:py-24">
+				<div className="flex flex-col gap-10 sm:gap-12 items-center w-full max-w-2xl">
+					{/* Header */}
+					<div className="flex flex-col gap-6 items-start w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+						<Link
+							href="/"
+							className="group flex items-center gap-3"
+							aria-label="Home"
+						>
+							<div className="relative">
+								<div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/20 to-transparent blur-xl group-hover:blur-2xl transition-all duration-500" />
+								<div className="relative flex items-center justify-center size-14 sm:size-16 rounded-xl bg-gradient-to-br from-muted to-muted/50 border border-border/50 group-hover:border-primary/30 transition-all duration-300">
+									<Layout className="size-7 sm:size-8 text-foreground/80" />
+								</div>
+							</div>
+							<div>
+								<h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+									CMS Playground
+								</h1>
+								<p className="text-sm text-muted-foreground">
+									A visual experiment
+								</p>
+							</div>
+						</Link>
+
+						<nav
+							className="flex flex-wrap gap-4 sm:gap-6 items-center"
+							aria-label="Main navigation"
+						>
 							<Link
-								href="/docs"
-								className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-primary md:block"
+								href="/cms"
+								className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
 							>
-								Documentation
+								Admin Panel
 							</Link>
 							<a
 								href="https://github.com/byronwade/cms.byronwade.com"
 								target="_blank"
 								rel="noopener noreferrer"
-								className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-primary md:block"
+								className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
 							>
-								GitHub
+								Source Code
 							</a>
-						</div>
-						<Link href="/cms">
-							<Button variant="default" size="sm">
-								<Layout className="mr-2 h-4 w-4" />
-								Open Admin Panel
-							</Button>
-						</Link>
-					</nav>
-				</div>
-			</header>
+							<a
+								href="https://byronwade.com"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+							>
+								About Me
+							</a>
+						</nav>
+					</div>
 
-			<div className="flex min-h-screen flex-col items-center bg-background">
-				<div className="container flex max-w-[64rem] flex-col items-center gap-8 text-center py-12">
-					<div className="space-y-4">
-						<h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-neutral-100 dark:to-neutral-400">
-							MyCMS
-						</h1>
-						<p className="text-xl text-muted-foreground max-w-[42rem] mx-auto">
-							The modern alternative to WordPress. Build faster, scale better,
-							and maintain easier with our next-generation CMS
+					{/* Main Content */}
+					<div className="flex flex-col gap-5 text-base text-foreground animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+						<p className="leading-relaxed">
+							This is a <span className="font-medium">fun side project</span>{" "}
+							where I explore visual concepts and design ideas for content
+							management systems. It&apos;s not a production-ready CMS—just a
+							playground to test my vibe coding skills and see what interesting
+							UI/UX patterns I can come up with.
+						</p>
+
+						<p className="leading-relaxed">
+							Built with{" "}
+							<a
+								href="https://nextjs.org"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="font-medium underline decoration-muted-foreground/40 underline-offset-[3px] hover:decoration-foreground transition-colors"
+							>
+								Next.js
+							</a>
+							,{" "}
+							<a
+								href="https://tailwindcss.com"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="font-medium underline decoration-muted-foreground/40 underline-offset-[3px] hover:decoration-foreground transition-colors"
+							>
+								Tailwind CSS
+							</a>
+							, and{" "}
+							<a
+								href="https://ui.shadcn.com"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="font-medium underline decoration-muted-foreground/40 underline-offset-[3px] hover:decoration-foreground transition-colors"
+							>
+								shadcn/ui
+							</a>
+							. The goal is to experiment with modern design patterns and see
+							how far I can push the boundaries of what a CMS interface could
+							look like.
+						</p>
+
+						<p className="leading-relaxed">
+							Feel free to poke around the{" "}
+							<Link
+								href="/cms"
+								className="font-medium underline decoration-muted-foreground/40 underline-offset-[3px] hover:decoration-foreground transition-colors"
+							>
+								admin panel
+							</Link>{" "}
+							to see what I&apos;ve been experimenting with. The code is
+							open-source if you want to dig deeper.
 						</p>
 					</div>
 
-					<div className="flex gap-4">
+					{/* Feature Highlights */}
+					<div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+						<div className="flex items-start gap-3 p-4 rounded-lg border bg-muted/30">
+							<Sparkles className="size-5 text-muted-foreground shrink-0 mt-0.5" />
+							<div>
+								<h3 className="font-medium text-sm">Visual Experiments</h3>
+								<p className="text-xs text-muted-foreground mt-1">
+									Testing design ideas and UI patterns
+								</p>
+							</div>
+						</div>
+						<div className="flex items-start gap-3 p-4 rounded-lg border bg-muted/30">
+							<Code2 className="size-5 text-muted-foreground shrink-0 mt-0.5" />
+							<div>
+								<h3 className="font-medium text-sm">Vibe Coding</h3>
+								<p className="text-xs text-muted-foreground mt-1">
+									Building for fun, not deadlines
+								</p>
+							</div>
+						</div>
+						<div className="flex items-start gap-3 p-4 rounded-lg border bg-muted/30">
+							<Palette className="size-5 text-muted-foreground shrink-0 mt-0.5" />
+							<div>
+								<h3 className="font-medium text-sm">Design Focus</h3>
+								<p className="text-xs text-muted-foreground mt-1">
+									Exploring what CMS could look like
+								</p>
+							</div>
+						</div>
+					</div>
+
+					{/* CTA Buttons */}
+					<div className="flex flex-wrap gap-3 items-center animate-in fade-in slide-in-from-bottom-4 duration-500 delay-450">
+						<Link
+							href="/cms"
+							className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors"
+						>
+							<Layout className="size-4" />
+							Explore the CMS
+						</Link>
 						<a
 							href="https://github.com/byronwade/cms.byronwade.com"
 							target="_blank"
 							rel="noopener noreferrer"
+							className="inline-flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
 						>
-							<Button variant="outline" size="lg">
-								<Github className="mr-2 h-4 w-4" />
-								View Source
-							</Button>
+							<Github className="size-4" />
+							View Source
 						</a>
-						<Link href="/cms">
-							<Button
-								size="lg"
-								className="bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-neutral-100 dark:to-neutral-400 dark:text-neutral-900"
-							>
-								<Layout className="mr-2 h-4 w-4" />
-								Open Admin Panel
-							</Button>
-						</Link>
 					</div>
 
-					<div className="w-full max-w-4xl mt-8">
-						<h2 className="text-2xl font-bold mb-6">
-							20 Ways We&apos;re Better Than WordPress
-						</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Gauge className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">300% Faster Page Loads</h3>
-								<p className="text-sm text-muted-foreground">
-									Average page load of 0.3s compared to WordPress&apos;s 1.3s
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Lock className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">
-									95% Fewer Security Issues
-								</h3>
-								<p className="text-sm text-muted-foreground">
-									Built-in enterprise security reduces vulnerabilities
-									significantly
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Cpu className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">60% Less Server Load</h3>
-								<p className="text-sm text-muted-foreground">
-									Efficient SSR and caching vs traditional PHP processing
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<BanknoteIcon className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">70% Cost Reduction</h3>
-								<p className="text-sm text-muted-foreground">
-									No premium plugins needed for essential features
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<ImageIcon className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">50% Smaller Images</h3>
-								<p className="text-sm text-muted-foreground">
-									Built-in next-gen format optimization and compression
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Bot className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Native AI Integration</h3>
-								<p className="text-sm text-muted-foreground">
-									Built-in AI features vs $30/month for similar WordPress
-									plugins
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Search className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">40% Better SEO Scores</h3>
-								<p className="text-sm text-muted-foreground">
-									Optimized core web vitals and semantic HTML structure
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Rocket className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">80% Faster Development</h3>
-								<p className="text-sm text-muted-foreground">
-									Modern TypeScript stack speeds up development lifecycle
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Database className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">200% Faster Queries</h3>
-								<p className="text-sm text-muted-foreground">
-									Optimized database operations vs WordPress&apos;s heavy
-									queries
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Clock className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">90% Less Maintenance</h3>
-								<p className="text-sm text-muted-foreground">
-									No plugin updates or compatibility issues to manage
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Puzzle className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Type-Safe Extensions</h3>
-								<p className="text-sm text-muted-foreground">
-									No more plugin conflicts or compatibility issues
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Wifi className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">400% Faster API</h3>
-								<p className="text-sm text-muted-foreground">
-									GraphQL and REST endpoints with superior performance
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Zap className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Intelligent Caching</h3>
-								<p className="text-sm text-muted-foreground">
-									Built-in edge caching vs complex cache plugins
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Download className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">75% Faster Assets</h3>
-								<p className="text-sm text-muted-foreground">
-									Optimized asset loading and delivery system
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<BarChart className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Real-Time Analytics</h3>
-								<p className="text-sm text-muted-foreground">
-									Built-in performance and user analytics
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Layers className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Flexible Architecture</h3>
-								<p className="text-sm text-muted-foreground">
-									True headless design vs traditional monolithic structure
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Keyboard className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Modern Dev Tools</h3>
-								<p className="text-sm text-muted-foreground">
-									Full TypeScript support and hot reload development
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Settings className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Code-First Config</h3>
-								<p className="text-sm text-muted-foreground">
-									Version-controlled configuration vs database settings
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Heart className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">90% User Satisfaction</h3>
-								<p className="text-sm text-muted-foreground">
-									Intuitive interface with modern UX patterns
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border bg-muted/30">
-								<Globe className="h-6 w-6 mb-4 mx-auto text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Infinite Scaling</h3>
-								<p className="text-sm text-muted-foreground">
-									Edge-ready architecture vs traditional hosting limits
-								</p>
-							</div>
-						</div>
-					</div>
-
-					<div className="w-full max-w-4xl p-6 rounded-lg border bg-muted/10">
-						<div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
-							<div>
-								<h4 className="text-2xl font-bold text-primary">0.3s</h4>
-								<p className="text-sm text-muted-foreground">
-									Average Page Load
-								</p>
-							</div>
-							<div>
-								<h4 className="text-2xl font-bold text-primary">99.9%</h4>
-								<p className="text-sm text-muted-foreground">Uptime</p>
-							</div>
-							<div>
-								<h4 className="text-2xl font-bold text-primary">100/100</h4>
-								<p className="text-sm text-muted-foreground">
-									Google PageSpeed
-								</p>
-							</div>
-							<div>
-								<h4 className="text-2xl font-bold text-primary">50ms</h4>
-								<p className="text-sm text-muted-foreground">Server Response</p>
-							</div>
-						</div>
-					</div>
-
-					<div className="w-full max-w-3xl space-y-4 p-6 rounded-lg border bg-muted/50">
-						<div className="space-y-2">
-							<h2 className="text-lg font-semibold">
-								🚧 Project Status: Building the Future of CMS
-							</h2>
-							<p className="text-sm text-muted-foreground">
-								We&apos;re creating a{" "}
-								<strong>modern alternative to WordPress</strong> that developers
-								love and content editors enjoy. While our frontend showcases the
-								next generation of content management, we&apos;re actively
-								seeking backend developers to help build a CMS that&apos;s truly
-								better than WordPress in every way.
-							</p>
-						</div>
-					</div>
-
-					<div className="mt-12 w-full">
-						<h2 className="text-3xl font-bold mb-8">Core Features</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							<div className="flex flex-col items-center space-y-4 rounded-lg border p-6 backdrop-blur-sm">
-								<Blocks className="h-8 w-8" />
-								<h3 className="text-xl font-bold">Visual Builder</h3>
-								<p className="text-muted-foreground">
-									Drag-and-drop interface for building content models and
-									layouts
-								</p>
-							</div>
-							<div className="flex flex-col items-center space-y-4 rounded-lg border p-6 backdrop-blur-sm">
-								<Bot className="h-8 w-8" />
-								<h3 className="text-xl font-bold">AI-Powered</h3>
-								<p className="text-muted-foreground">
-									Built-in AI features for content generation and optimization
-								</p>
-							</div>
-							<div className="flex flex-col items-center space-y-4 rounded-lg border p-6 backdrop-blur-sm">
-								<FileJson className="h-8 w-8" />
-								<h3 className="text-xl font-bold">Code-First</h3>
-								<p className="text-muted-foreground">
-									Define content models in TypeScript with full type safety
-								</p>
-							</div>
-						</div>
-					</div>
-
-					<div className="mt-16">
-						<h2 className="text-3xl font-bold mb-8">
-							Enterprise-Ready Features
-						</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							<div className="flex flex-col items-center space-y-4 rounded-lg border p-6 backdrop-blur-sm">
-								<Globe className="h-8 w-8" />
-								<h3 className="text-xl font-bold">Multi-Tenant Ready</h3>
-								<p className="text-muted-foreground">
-									Built to handle multiple brands, websites, or applications
-									from a single instance
-								</p>
-							</div>
-							<div className="flex flex-col items-center space-y-4 rounded-lg border p-6 backdrop-blur-sm">
-								<Languages className="h-8 w-8" />
-								<h3 className="text-xl font-bold">Localization</h3>
-								<p className="text-muted-foreground">
-									Built-in support for multiple languages and content
-									translation workflows
-								</p>
-							</div>
-							<div className="flex flex-col items-center space-y-4 rounded-lg border p-6 backdrop-blur-sm">
-								<Server className="h-8 w-8" />
-								<h3 className="text-xl font-bold">API-First Design</h3>
-								<p className="text-muted-foreground">
-									REST & GraphQL APIs with customizable endpoints and responses
-								</p>
-							</div>
-							<div className="flex flex-col items-center space-y-4 rounded-lg border p-6 backdrop-blur-sm">
-								<Shield className="h-8 w-8" />
-								<h3 className="text-xl font-bold">Enterprise Security</h3>
-								<p className="text-muted-foreground">
-									Role-based access control, SSO, and advanced security features
-								</p>
-							</div>
-							<div className="flex flex-col items-center space-y-4 rounded-lg border p-6 backdrop-blur-sm">
-								<Workflow className="h-8 w-8" />
-								<h3 className="text-xl font-bold">Publishing Workflows</h3>
-								<p className="text-muted-foreground">
-									Customizable content approval and publishing processes
-								</p>
-							</div>
-							<div className="flex flex-col items-center space-y-4 rounded-lg border p-6 backdrop-blur-sm">
-								<Boxes className="h-8 w-8" />
-								<h3 className="text-xl font-bold">Digital Asset Management</h3>
-								<p className="text-muted-foreground">
-									Advanced media library with metadata, versions, and
-									transformations
-								</p>
-							</div>
-						</div>
-					</div>
-
-					<div className="mt-16 w-full">
-						<h2 className="text-3xl font-bold mb-8">Built for Developers</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left max-w-4xl mx-auto">
-							<div className="p-6 rounded-lg border">
-								<Zap className="h-6 w-6 mb-4 text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Next.js Native</h3>
-								<p className="text-sm text-muted-foreground">
-									Seamlessly integrated with Next.js App Router and Server
-									Components
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border">
-								<Code2 className="h-6 w-6 mb-4 text-muted-foreground" />
-								<h3 className="font-semibold mb-2">TypeScript First</h3>
-								<p className="text-sm text-muted-foreground">
-									Full type safety and autocompletion for your content
-								</p>
-							</div>
-						</div>
-					</div>
-
-					<div className="mt-16 w-full">
-						<h2 className="text-3xl font-bold mb-8">Perfect For</h2>
-						<div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-4xl mx-auto">
-							<div className="p-6 rounded-lg border">
-								<Laptop className="h-6 w-6 mb-4 text-muted-foreground" />
-								<h3 className="font-semibold mb-2">WordPress Migration</h3>
-								<p className="text-sm text-muted-foreground">
-									Easily migrate from WordPress to a faster, more secure, and
-									modern platform
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border">
-								<Cloud className="h-6 w-6 mb-4 text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Digital Experiences</h3>
-								<p className="text-sm text-muted-foreground">
-									Create immersive digital experiences that WordPress can&apos;t
-									handle
-								</p>
-							</div>
-							<div className="p-6 rounded-lg border">
-								<Users className="h-6 w-6 mb-4 text-muted-foreground" />
-								<h3 className="font-semibold mb-2">Enterprise Teams</h3>
-								<p className="text-sm text-muted-foreground">
-									Better collaboration tools and workflows than traditional CMSs
-								</p>
-							</div>
-						</div>
-					</div>
-
-					<div className="mt-16 max-w-2xl">
-						<h2 className="text-3xl font-bold mb-4">Join the Development</h2>
-						<p className="text-lg text-muted-foreground mb-6">
-							Help us build the next generation of content management systems.
-							Your expertise can shape the future of web development.
-						</p>
-						<div className="flex gap-4 justify-center">
+					{/* Footer */}
+					<div className="w-full pt-8 border-t animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
+						<p className="text-xs text-center text-muted-foreground">
+							Built by{" "}
 							<a
-								href="https://github.com/byronwade/cms.byronwade.com"
+								href="https://byronwade.com"
 								target="_blank"
 								rel="noopener noreferrer"
+								className="font-medium hover:text-foreground transition-colors"
 							>
-								<Button variant="outline" size="lg">
-									<Github className="mr-2 h-4 w-4" />
-									Contribute on GitHub
-								</Button>
-							</a>
-							<Link href="/docs" className="hidden md:block">
-								<Button variant="secondary" size="lg">
-									<Brush className="mr-2 h-4 w-4" />
-									View Documentation
-								</Button>
-							</Link>
-						</div>
+								Byron Wade
+							</a>{" "}
+							as a creative exercise. Not affiliated with any actual CMS
+							product.
+						</p>
 					</div>
 				</div>
 			</div>
-		</>
+		</main>
 	);
 }

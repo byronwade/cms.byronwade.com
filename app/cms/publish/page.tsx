@@ -235,9 +235,7 @@ const ContentCard = memo(function ContentCard({
 					)}
 					{relatedToThis.length > 0 && (
 						<div
-							className={
-								relatedItem ? "pt-2 mt-2 border-t border-border" : ""
-							}
+							className={relatedItem ? "pt-2 mt-2 border-t border-border" : ""}
 						>
 							<div className="flex items-center gap-2 mb-1">
 								<span

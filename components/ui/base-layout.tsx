@@ -48,12 +48,12 @@ export function BaseLayout({ children, config }: BaseLayoutProps) {
 	const toggleRightSidebar = () => setRightSidebarOpen(!rightSidebarOpen);
 
 	return (
-		<div 
-			className="flex flex-col overflow-hidden" 
-			style={{ 
+		<div
+			className="flex flex-col overflow-hidden"
+			style={{
 				height: "calc(100vh - 2.5rem)",
 				marginTop: "2.5rem",
-				width: "100%"
+				width: "100%",
 			}}
 		>
 			{/* Main Container - Contains sidebars and main content area */}

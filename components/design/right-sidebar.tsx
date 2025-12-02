@@ -57,10 +57,7 @@ function RightSidebar({ isOpen, selectedElement }: RightSidebarProps) {
 								<Label>Position</Label>
 								<div className="grid grid-cols-2 gap-2">
 									<Input placeholder="X" className="bg-muted border-border" />
-									<Input
-										placeholder="Y"
-										className="bg-input border-border"
-									/>
+									<Input placeholder="Y" className="bg-input border-border" />
 								</div>
 							</div>
 							<div className="space-y-2">
@@ -79,43 +76,19 @@ function RightSidebar({ isOpen, selectedElement }: RightSidebarProps) {
 							<div className="space-y-2">
 								<Label>Margin</Label>
 								<div className="grid grid-cols-4 gap-2">
-									<Input
-										placeholder="T"
-										className="bg-input border-border"
-									/>
-									<Input
-										placeholder="R"
-										className="bg-input border-border"
-									/>
-									<Input
-										placeholder="B"
-										className="bg-input border-border"
-									/>
-									<Input
-										placeholder="L"
-										className="bg-input border-border"
-									/>
+									<Input placeholder="T" className="bg-input border-border" />
+									<Input placeholder="R" className="bg-input border-border" />
+									<Input placeholder="B" className="bg-input border-border" />
+									<Input placeholder="L" className="bg-input border-border" />
 								</div>
 							</div>
 							<div className="space-y-2">
 								<Label>Padding</Label>
 								<div className="grid grid-cols-4 gap-2">
-									<Input
-										placeholder="T"
-										className="bg-input border-border"
-									/>
-									<Input
-										placeholder="R"
-										className="bg-input border-border"
-									/>
-									<Input
-										placeholder="B"
-										className="bg-input border-border"
-									/>
-									<Input
-										placeholder="L"
-										className="bg-input border-border"
-									/>
+									<Input placeholder="T" className="bg-input border-border" />
+									<Input placeholder="R" className="bg-input border-border" />
+									<Input placeholder="B" className="bg-input border-border" />
+									<Input placeholder="L" className="bg-input border-border" />
 								</div>
 							</div>
 						</TabsContent>
